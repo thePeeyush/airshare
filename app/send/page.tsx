@@ -19,6 +19,8 @@ const page = () => {
              }}
              />
 
+             <div className="w-52 h-52 border-4 border-blue-600 animate-pulse rounded-md absolute"></div>
+
             <div className='text-xs break-words text-clip'>{data}</div>
 
         </main>
