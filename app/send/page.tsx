@@ -1,10 +1,18 @@
 'use client'
 
-import React, { useState } from 'react'
+import { PeerConnection } from '@/utils/peer';
+import React, { useEffect, useState } from 'react'
 import { QrReader } from 'react-qr-reader';
 
 const page = () => {
-    const [data, setData] = useState<string>("Scanning");
+    const [senderID, setSenderID] = useState<string|null>(null)
+
+    useEffect(()=>{
+       if (senderID!==null) {
+        PeerConnection.connectPeer(senderID);
+       }
+    },[senderID])
+
     return (
         <main className='flex flex-col justify-center items-center h-[70vh]'>
             <h1>Scan QR to send</h1>
@@ -14,14 +22,14 @@ const page = () => {
              scanDelay={300}
              onResult={(result)=>{
                 if(result){
-                    setData(result['text'])
+                    setSenderID(result['text'])
                 }
              }}
              />
 
              <div className="w-52 h-52 border-4 border-blue-600 animate-pulse rounded-md absolute"></div>
 
-            <div className='text-xs break-words text-clip'>{data}</div>
+            <div className='text-xs break-words text-clip'>{senderID}</div>
 
         </main>
     )
