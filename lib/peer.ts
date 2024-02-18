@@ -1,4 +1,5 @@
-import Peer, {DataConnection} from "peerjs";
+import getIceServer from "@/utils/getIceServer";
+import Peer, {DataConnection,} from "airsharejs";
 
 export enum DataType {
     FILE = 'FILE',
@@ -18,9 +19,16 @@ let connectionMap: Map<string, DataConnection> = new Map<string, DataConnection>
 
 export const PeerConnection = {
     getPeer: () => peer,
-    startPeerSession: () => new Promise<string>((resolve, reject) => {
+    startPeerSession: () => new Promise<string>(async(resolve, reject) => {
         try {
-            peer = new Peer()
+            const iceServers = await getIceServer()
+            console.log(iceServers);
+            
+            peer = new Peer({
+                config:{
+                    iceServers:iceServers
+                }
+            })
             peer.on('open', (id) => {
                 console.log('My ID: ' + id)
                 resolve(id)

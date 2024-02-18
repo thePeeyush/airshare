@@ -8,12 +8,12 @@ import { useConnection } from '@/store/connection'
 import { useToast } from '@/components/ui/use-toast'
 import download from "js-file-download";
 
-
 const Recieve = () => {  
 
   const myID =  usePeer(s=>s.myID)
   const setIsConnected = useConnection(s=>s.setIsConnected)
   const {toast} = useToast()
+  
 
   try {
     setIsConnected(true);
@@ -29,9 +29,12 @@ const Recieve = () => {
                 title:'Data .... ',
                 description:`${file.fileName}`
             })
-            if (file.dataType === DataType.FILE) {
-              download(file.file || '', file.fileName || "fileName", file.fileType)
-          }
+          //   if (file.dataType === DataType.FILE) {
+          //     download(file.file || '', file.fileName || "fileName", file.fileType)
+          // }
+
+          console.log(file);
+          
             
         })
     })
