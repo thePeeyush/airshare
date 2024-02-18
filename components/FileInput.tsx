@@ -38,8 +38,9 @@ const FileInput = () => {
             }
         }
     }
+
     return (
-        <div className="grid w-full max-w-sm items-center gap-1.5">
+        <div className="flex flex-col w-full max-w-xs h-full items-center justify-center gap-1.5">
             <Input id="file" type="file" onChange={e => handleFileChange(e)} />
             <Button disabled={file === null} onClick={handleUpload} >Uplaod File</Button>
         </div>

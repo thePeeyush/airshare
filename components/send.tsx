@@ -4,27 +4,27 @@ import React from 'react'
 import { QrReader } from 'react-qr-reader';
 import { usePeer } from '@/store/peer';
 import { PeerConnection } from '@/lib/peer';
-import { useConnection } from '@/store/connection';
-import Connected from '@/components/Connected';
+import { toast } from '@/components/ui/use-toast';
+import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
+import { useConnection } from '@/store/connection';
 
-const page = () => {
+const Send = () => {
     const peerID = usePeer(s => s.peerID)
     const setPeerID = usePeer(s => s.setPeerID)
-    const isConnected = useConnection(s=>s.isConnected)
     const setIsConnected = useConnection(s=>s.setIsConnected)
+    const router = useRouter()
 
 
     const connectToPeer = async ()=>{
         try {
             await PeerConnection.connectPeer(peerID)
-            setIsConnected(true);
-            PeerConnection.onIncomingConnection((conn)=>{
-                const peerID = conn.peer
-                PeerConnection.onConnectionDisconnected(peerID,()=>{
-                    console.log('peer disconnected');
-                })
+            setIsConnected(true)
+            toast({
+              description:`Connected to ${peerID}`
             })
+            router.push('/peer')
         } catch (error) {
             console.log(error);
         }
@@ -34,7 +34,7 @@ const page = () => {
     return (
         <main className='flex flex-col justify-center items-center h-[70vh]'>
             {
-                peerID === '' && (
+                peerID === '' ? (
                     <>
                         <h1>Scan QR to send</h1>
                         <QrReader
@@ -49,11 +49,21 @@ const page = () => {
                         <div className="w-52 h-52 border-4 border-blue-600 animate-pulse rounded-md absolute"></div>
                     </>
                 )
+                :(
+                    <>
+                    <Image
+                    src={'/connecting.gif'}
+                    width={300}
+                    height={400}
+                    alt='connecting'
+                    />
+                    <h1 className='text-center p-4 border-green-400 text-green-500 rounded-md'>🌐{ peerID}</h1>
+                    <Button onClick={connectToPeer}>Connect</Button>
+                    </>
+                )
             }
-            { (peerID !== '' && isConnected === false ) && <Button onClick={connectToPeer}>connect</Button> }
-            { isConnected === true && <Connected/> }
         </main>
     )
 }
 
-export default page
+export default Send
