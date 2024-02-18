@@ -29,30 +29,26 @@ const page = () => {
         })
     }
 
-    try {
-            PeerConnection.onConnectionDisconnected(peerID,()=>{
-                toast({
-                    description:`Disconnected`
-                })
-                PeerConnection.closePeerSession()
-                router.push('/')
-            })
-    
-            PeerConnection.onConnectionReceiveData(peerID,(file)=>{                
-                toast({
-                    title:'Recieved',
-                    description:`${file.fileName}`
-                })
-                if (file.dataType === DataType.FILE) {
-                  download(file.file || '', file.fileName || "fileName", file.fileType)
-              }            
-            })
-        }
-        catch (error) {
-        console.log(error);   
-    }
-
     if(isConnected){
+
+        PeerConnection.onConnectionDisconnected(peerID,()=>{
+            toast({
+                description:`Disconnected`
+            })
+            PeerConnection.closePeerSession()
+            router.push('/')
+        })
+
+        PeerConnection.onConnectionReceiveData(peerID,(file)=>{                
+            toast({
+                title:'Recieved',
+                description:`${file.fileName}`
+            })
+            if (file.dataType === DataType.FILE) {
+              download(file.file || '', file.fileName || "fileName", file.fileType)
+          }            
+        })
+        
         return (
             <main className='flex flex-col justify-between items-center h-[90vh]'>
         <FileInput/>

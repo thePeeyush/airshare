@@ -21,9 +21,7 @@ export const PeerConnection = {
     getPeer: () => peer,
     startPeerSession: () => new Promise<string>(async(resolve, reject) => {
         try {
-            const iceServers = await getIceServer()
-            console.log(iceServers);
-            
+            const iceServers = await getIceServer()            
             peer = new Peer({
                 config:{
                     iceServers:iceServers

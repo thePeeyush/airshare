@@ -1,13 +1,12 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect } from 'react'
 import { QrReader } from 'react-qr-reader';
 import { usePeer } from '@/store/peer';
 import { PeerConnection } from '@/lib/peer';
 import { toast } from '@/components/ui/use-toast';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { Button } from '@/components/ui/button';
 import { useConnection } from '@/store/connection';
 
 const Send = () => {
@@ -15,6 +14,10 @@ const Send = () => {
     const setPeerID = usePeer(s => s.setPeerID)
     const setIsConnected = useConnection(s=>s.setIsConnected)
     const router = useRouter()
+
+    useEffect(()=>{
+        connectToPeer()
+    },[peerID])
 
 
     const connectToPeer = async ()=>{
@@ -58,7 +61,6 @@ const Send = () => {
                     alt='connecting'
                     />
                     <h1 className='text-center p-4 border-green-400 text-green-500 rounded-md'>🌐{ peerID}</h1>
-                    <Button onClick={connectToPeer}>Connect</Button>
                     </>
                 )
             }
