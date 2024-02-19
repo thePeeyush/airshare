@@ -1,4 +1,4 @@
-import React, { ReactEventHandler, useState } from 'react'
+import React, { useState } from 'react'
 import { Input } from "@/components/ui/input"
 import { Button } from './ui/button'
 import { DataType, PeerConnection } from '@/lib/peer'
@@ -27,7 +27,7 @@ const FileInput = () => {
                     fileName: file.name,
                     fileType: file.type
                 })
-
+                setFile(null)
                 console.log('data send successfully')
                 toast({
                     description:'data send successfully'

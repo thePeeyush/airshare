@@ -12,20 +12,20 @@ import { useConnection } from '@/store/connection';
 const Send = () => {
     const peerID = usePeer(s => s.peerID)
     const setPeerID = usePeer(s => s.setPeerID)
-    const setIsConnected = useConnection(s=>s.setIsConnected)
+    const setIsConnected = useConnection(s => s.setIsConnected)
     const router = useRouter()
 
-    useEffect(()=>{
+    useEffect(() => {
         connectToPeer()
-    },[peerID])
+    }, [peerID])
 
 
-    const connectToPeer = async ()=>{
+    const connectToPeer = async () => {
         try {
             await PeerConnection.connectPeer(peerID)
             setIsConnected(true)
             toast({
-              description:`Connected to ${peerID}`
+                description: `Connected to ${peerID}`
             })
             router.push('/peer')
         } catch (error) {
@@ -35,11 +35,18 @@ const Send = () => {
 
 
     return (
-        <main className='flex flex-col justify-center items-center h-[70vh]'>
+        <main className='flex flex-col justify-center items-center h-screen overflow-hidden'>
+            <Image
+                src={'/logo.png'}
+                width={500}
+                height={500}
+                alt="logo"
+                className=" z-50 absolute top-5 rounded-xl max-w-[250px]"
+            />
             {
                 peerID === '' ? (
                     <>
-                        <h1>Scan QR to send</h1>
+                        <h1 className=' lg:absolute z-50 top-64'>Scan QR to send</h1>
                         <QrReader
                             constraints={{ facingMode: 'environment' }}
                             className='w-full'
@@ -52,17 +59,17 @@ const Send = () => {
                         <div className="w-52 h-52 border-4 border-blue-600 animate-pulse rounded-md absolute"></div>
                     </>
                 )
-                :(
-                    <>
-                    <Image
-                    src={'/connecting.gif'}
-                    width={300}
-                    height={400}
-                    alt='connecting'
-                    />
-                    <h1 className='text-center p-4 border-green-400 text-green-500 rounded-md'>🌐{ peerID}</h1>
-                    </>
-                )
+                    : (
+                        <>
+                            <Image
+                                src={'/connecting.gif'}
+                                width={300}
+                                height={400}
+                                alt='connecting'
+                            />
+                            <h1 className='text-center p-4 border-green-400 text-green-500 rounded-md'>🌐{peerID}</h1>
+                        </>
+                    )
             }
         </main>
     )
