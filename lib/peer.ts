@@ -7,11 +7,19 @@ export enum DataType {
 
 }
 export interface Data {
+    id:number
     dataType: DataType
     file?: Blob
     fileName?: string
     fileType?: string
     message?: string
+}
+
+
+export interface Pre {
+    id:number
+    filename:string
+    filesize:number
 }
 
 let peer: Peer | undefined
@@ -28,8 +36,8 @@ export const PeerConnection = {
                 }
             })
             peer.on('open', (id) => {
-                console.log('My ID: ' + id)
                 resolve(id)
+                console.log('My ID: ' + id)
             }).on('error', (err) => {
                 console.log(err)
             })
@@ -100,7 +108,7 @@ export const PeerConnection = {
             });
         }
     },
-    sendConnection: (id: string, data: Data): Promise<void> => new Promise((resolve, reject) => {
+    sendConnection: (id: string, data: Data|Pre): Promise<void> => new Promise((resolve, reject) => {
         if (!connectionMap.has(id)) {
             reject(new Error("Connection didn't exist"))
         }
@@ -114,7 +122,24 @@ export const PeerConnection = {
         }
         resolve()
     }),
-    onConnectionReceiveData: (id: string, callback: (f: Data) => void) => {
+    // onConnnctionReceivePre:(id:string,callback:(f:Pre)=>void)=>{
+    //     if (!peer) {
+    //         throw new Error("Peer doesn't start yet")
+    //     }
+    //     if (!connectionMap.has(id)) {
+    //         throw new Error("Connection didn't exist")
+    //     }
+    //     let conn = connectionMap.get(id)
+    //     if (conn) {
+    //         conn.on('data', function (receivedData) {
+    //             let pre = receivedData as Pre
+    //             console.log("Receiving pre from " + id)
+    //             callback(pre)
+    //         })
+    //     }
+    // },
+
+    onConnectionReceiveData:<T extends (Data|Pre)>(id: string, callback: (f: T) => void) => {
         if (!peer) {
             throw new Error("Peer doesn't start yet")
         }
@@ -125,7 +150,7 @@ export const PeerConnection = {
         if (conn) {
             conn.on('data', function (receivedData) {
                 console.log("Receiving data from " + id)
-                let data = receivedData as Data
+                let data = receivedData as T
                 callback(data)
             })
         }

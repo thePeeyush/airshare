@@ -1,68 +1,68 @@
 'use client'
 
-import { useToast } from '@/components/ui/use-toast'
-import { DataType, PeerConnection } from '@/lib/peer'
+import { Data, DataType, PeerConnection, Pre } from '@/lib/peer'
 import { useRouter } from 'next/navigation'
 import React, { useEffect } from 'react'
 import download from "js-file-download";
 import FileInput from '@/components/FileInput'
 import { usePeer } from '@/store/peer'
-import { Button } from '@/components/ui/button'
 import { useConnection } from '@/store/connection'
 import Recieve from '@/components/recieve'
 import Send from '@/components/send'
+import Head from '@/components/head'
+import SharedList from '@/components/sharedList'
+import useShared from '@/store/shared'
+import NotShared from '@/components/notShared'
+import Image from 'next/image';
 
 const page = () => {
 
-    const { toast } = useToast()
     const router = useRouter()
     const peerID = usePeer(s => s.peerID)
     const isConnected = useConnection(s => s.isConnected)
     const reciever = useConnection(s => s.reciver)
     const sender = useConnection(s => s.sender)
+    const fileCount = useShared(s => s.count)
+    const setCount = useShared(s => s.setCount)
+    const setfiles = useShared(s => s.setList)
+    const setStatus = useShared(s => s.setStatus)
 
-    useEffect(()=>{
-        if(isConnected) {
+
+    useEffect(() => {
+        if (isConnected) {
             handleConnection()
         }
-    },[isConnected])
-
-    const handleDisconnect = async () => {
-        await PeerConnection.closePeerSession()
-        router.push('/')
-        toast({
-            description: 'Disconnected'
-        })
-    }
+    }, [isConnected])
 
     const handleConnection = () => {
         PeerConnection.onConnectionDisconnected(peerID, () => {
-            toast({
-                description: `Disconnected`
-            })
             PeerConnection.closePeerSession()
             router.push('/')
         })
 
-        PeerConnection.onConnectionReceiveData(peerID, (file) => {
-            toast({
-                title: 'Recieved',
-                description: `${file.fileName}`
-            })
+        PeerConnection.onConnectionReceiveData<Data>(peerID, (file) => {
             if (file.dataType === DataType.FILE) {
                 download(file.file || '', file.fileName || "fileName", file.fileType)
+                setStatus(file.id,true)
+            }
+            
+        })
+
+        PeerConnection.onConnectionReceiveData<Pre>(peerID, (info) => {
+            if (info.filename) {
+                setfiles({ id: info.id, name: info.filename, size: info.filesize, status: false })
+                setCount()
             }
         })
     }
 
+
     if (isConnected) {
         return (
-            <main className='flex flex-col justify-between items-center h-[90vh]'>
+            <main className='flex flex-col justify-between items-center p-4 peer-bg'>
+                <Head />
+                {fileCount !== 0 ? <SharedList className='bg-transparent border-none' /> : <NotShared />}
                 <FileInput />
-                <div className="flex flex-col gap-4 w-full max-w-xs">
-                    <div className=' border-green-500 border-2 rounded-md p-2 text-green-500'>Connected to {peerID} </div>
-                    <Button className='bg-red-400 text-black' onClick={handleDisconnect}>Disconnect</Button>
-                </div>
             </main>
         )
     }
@@ -74,6 +74,19 @@ const page = () => {
     if (sender) {
         return (<Send />)
     }
+
+    return(
+        <div className="flex flex-col gap-2 justify-center items-center p-12 w-screen h-screen ">
+            <Image
+            src={'/loading.gif'}
+            width={500}
+            height={500}
+            alt='loading'
+            className='rounded-lg w-full max-w-xl'
+            />
+            <p>Connecting...</p>
+        </div>
+    )
 }
 
 export default page

@@ -4,7 +4,6 @@ import React, { useEffect } from 'react'
 import { QrReader } from 'react-qr-reader';
 import { usePeer } from '@/store/peer';
 import { PeerConnection } from '@/lib/peer';
-import { toast } from '@/components/ui/use-toast';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { useConnection } from '@/store/connection';
@@ -24,9 +23,6 @@ const Send = () => {
         try {
             await PeerConnection.connectPeer(peerID)
             setIsConnected(true)
-            toast({
-                description: `Connected to ${peerID}`
-            })
             router.push('/peer')
         } catch (error) {
             console.log(error);
@@ -35,7 +31,7 @@ const Send = () => {
 
 
     return (
-        <main className='flex flex-col justify-center items-center h-screen overflow-hidden'>
+        <main className='flex flex-col justify-center items-center h-screen overflow-hidden max-w-lg mx-auto'>
             <Image
                 src={'/logo.png'}
                 width={500}
@@ -46,17 +42,16 @@ const Send = () => {
             {
                 peerID === '' ? (
                     <>
-                        <h1 className=' lg:absolute z-50 top-64'>Scan QR to send</h1>
                         <QrReader
                             constraints={{ facingMode: 'environment' }}
-                            className='w-full'
+                            className='w-full border-4 border-dashed border-black mask'
                             scanDelay={300}
                             onResult={(result) => {
                                 if (result) {
                                     setPeerID(result['text'])
                                 }
                             }} />
-                        <div className="w-52 h-52 border-4 border-blue-600 animate-pulse rounded-md absolute"></div>
+                        <h1>Scan QR to send</h1>
                     </>
                 )
                     : (

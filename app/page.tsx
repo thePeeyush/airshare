@@ -30,7 +30,7 @@ export default function Home() {
       <Image
       src={'/logo.png'}
       width={500}
-      height={500}
+      height={100}
       alt="logo"
       className=""
       />
