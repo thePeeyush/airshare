@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { useConnection } from '@/store/connection';
 
+
 const Send = () => {
     const peerID = usePeer(s => s.peerID)
     const setPeerID = usePeer(s => s.setPeerID)
@@ -18,14 +19,13 @@ const Send = () => {
         connectToPeer()
     }, [peerID])
 
-
     const connectToPeer = async () => {
         try {
             await PeerConnection.connectPeer(peerID)
             setIsConnected(true)
-            router.push('/peer')
         } catch (error) {
             console.log(error);
+            router.push('/')
         }
     }
 
@@ -44,7 +44,7 @@ const Send = () => {
                     <>
                         <QrReader
                             constraints={{ facingMode: 'environment' }}
-                            className='w-full border-4 border-dashed border-black mask'
+                            className='w-full mask'
                             scanDelay={300}
                             onResult={(result) => {
                                 if (result) {
@@ -61,6 +61,7 @@ const Send = () => {
                                 width={300}
                                 height={400}
                                 alt='connecting'
+                                className=' rounded-lg'
                             />
                             <h1 className='text-center p-4 border-green-400 text-green-500 rounded-md'>🌐{peerID}</h1>
                         </>

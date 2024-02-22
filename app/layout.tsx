@@ -6,8 +6,8 @@ import { Toaster } from "@/components/ui/toaster";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "ShareU.io",
-  description: "peer to peer file sharing app",
+  title: "AirShare",
+  description: "Peer to Peer file sharing app",
 };
 
 export default function RootLayout({

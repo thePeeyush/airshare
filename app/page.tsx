@@ -13,12 +13,14 @@ export default function Home() {
   const setMyID = usePeer(s=>s.setMyID)
   const setReciever = useConnection(s=>s.setReciever)
   const setSender = useConnection(s=>s.setSender)
+  const setsetStartSession = useConnection(s=>s.setStartSession)
 
   setSender(false)
   setReciever(false)
 
 
   const startSession = async (key:string)=>{
+    setsetStartSession(true)
     const id = await PeerConnection.startPeerSession()
     setMyID(id)
     key === 'sender' && setSender(true)
@@ -26,11 +28,11 @@ export default function Home() {
   }
 
   return (
-    <main className=" flex flex-col justify-around  items-center h-screen px-8 relative">
+    <main className=" flex flex-col justify-around  items-center px-8 h-[95vh]">
       <Image
       src={'/logo.png'}
       width={500}
-      height={100}
+      height={250}
       alt="logo"
       className=""
       />

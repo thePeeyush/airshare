@@ -9,15 +9,16 @@ type File = {
 
 interface files extends Array<File> {}
 
-interface List {
+interface Shared {
   count: number;
   list: files;
   setCount: () => void;
   setList: (file: File) => void;
   setStatus: (id: number, newStatus: boolean) => void;
+  reset: () => void;
 }
 
-const useShared = create<List>()((set) => ({
+const useShared = create<Shared>()((set) => ({
   count: 0,
   list: [],
   setCount: () => set((s) => ({ count: s.count + 1 })),
@@ -30,6 +31,7 @@ const useShared = create<List>()((set) => ({
         ),
       };
     }),
+  reset:()=>(set({count:0,list:[]}))
 }));
 
 export default useShared;

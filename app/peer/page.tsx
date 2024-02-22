@@ -22,10 +22,14 @@ const page = () => {
     const isConnected = useConnection(s => s.isConnected)
     const reciever = useConnection(s => s.reciver)
     const sender = useConnection(s => s.sender)
+    const resetConnection = useConnection(s=>s.reset)
+    const resetPeer = usePeer(s=>s.reset)
+    const resetShared = useShared(s=>s.reset)
     const fileCount = useShared(s => s.count)
     const setCount = useShared(s => s.setCount)
     const setfiles = useShared(s => s.setList)
     const setStatus = useShared(s => s.setStatus)
+    const startSession = useConnection(s=>s.startSession)
 
 
     useEffect(() => {
@@ -38,6 +42,9 @@ const page = () => {
         PeerConnection.onConnectionDisconnected(peerID, () => {
             PeerConnection.closePeerSession()
             router.push('/')
+            resetConnection()
+            resetPeer() 
+            resetShared()
         })
 
         PeerConnection.onConnectionReceiveData<Data>(peerID, (file) => {
@@ -75,18 +82,21 @@ const page = () => {
         return (<Send />)
     }
 
-    return(
-        <div className="flex flex-col gap-2 justify-center items-center p-12 w-screen h-screen ">
-            <Image
-            src={'/loading.gif'}
-            width={500}
-            height={500}
-            alt='loading'
-            className='rounded-lg w-full max-w-xl'
-            />
-            <p>Connecting...</p>
-        </div>
-    )
+    if(startSession){
+        return(
+            <div className="flex flex-col gap-2 justify-center items-center p-12 w-screen h-screen ">
+                <Image
+                src={'/loading.gif'}
+                width={500}
+                height={400}
+                alt='loading'
+                className='rounded-lg w-full max-w-xl h-auto'
+                />
+                <p>Connecting...</p>
+            </div>
+        )
+    }
+    router.push('/')
 }
 
 export default page
