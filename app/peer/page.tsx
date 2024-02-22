@@ -33,10 +33,12 @@ const page = () => {
 
 
     useEffect(() => {
-        if (isConnected) {
-            handleConnection()
-        }
+        if (isConnected) handleConnection()
     }, [isConnected])
+
+    useEffect(()=>{
+        if(!startSession) router.push('/')
+    },[startSession])
 
     const handleConnection = () => {
         PeerConnection.onConnectionDisconnected(peerID, () => {
@@ -63,7 +65,6 @@ const page = () => {
         })
     }
 
-
     if (isConnected) {
         return (
             <main className='flex flex-col justify-between items-center p-4 peer-bg'>
@@ -82,21 +83,18 @@ const page = () => {
         return (<Send />)
     }
 
-    if(startSession){
-        return(
-            <div className="flex flex-col gap-2 justify-center items-center p-12 w-screen h-screen ">
-                <Image
-                src={'/loading.gif'}
-                width={500}
-                height={400}
-                alt='loading'
-                className='rounded-lg w-full max-w-xl h-auto'
-                />
-                <p>Connecting...</p>
-            </div>
-        )
-    }
-    router.push('/')
+    return(
+        <div className="flex flex-col gap-2 justify-center items-center p-12 w-screen h-screen ">
+            <Image
+            src={'/loading.gif'}
+            width={500}
+            height={400}
+            alt='loading'
+            className='rounded-lg w-full max-w-xl h-auto'
+            />
+            <p>Connecting...</p>
+        </div>
+    )
 }
 
 export default page
