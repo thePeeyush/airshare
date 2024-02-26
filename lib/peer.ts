@@ -122,22 +122,6 @@ export const PeerConnection = {
         }
         resolve()
     }),
-    // onConnnctionReceivePre:(id:string,callback:(f:Pre)=>void)=>{
-    //     if (!peer) {
-    //         throw new Error("Peer doesn't start yet")
-    //     }
-    //     if (!connectionMap.has(id)) {
-    //         throw new Error("Connection didn't exist")
-    //     }
-    //     let conn = connectionMap.get(id)
-    //     if (conn) {
-    //         conn.on('data', function (receivedData) {
-    //             let pre = receivedData as Pre
-    //             console.log("Receiving pre from " + id)
-    //             callback(pre)
-    //         })
-    //     }
-    // },
 
     onConnectionReceiveData:<T extends (Data|Pre)>(id: string, callback: (f: T) => void) => {
         if (!peer) {
@@ -147,8 +131,10 @@ export const PeerConnection = {
             throw new Error("Connection didn't exist")
         }
         let conn = connectionMap.get(id)
+        let dataSize = 0
         if (conn) {
             conn.on('data', function (receivedData) {
+                console.log(receivedData);
                 console.log("Receiving data from " + id)
                 let data = receivedData as T
                 callback(data)

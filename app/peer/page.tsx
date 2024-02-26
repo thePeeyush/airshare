@@ -1,8 +1,8 @@
 'use client'
 
 import { Data, DataType, PeerConnection, Pre } from '@/lib/peer'
-import { useRouter } from 'next/navigation'
-import React, { useEffect } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import React, { Suspense, useEffect } from 'react'
 import download from "js-file-download";
 import FileInput from '@/components/FileInput'
 import { usePeer } from '@/store/peer'
@@ -18,43 +18,68 @@ import Image from 'next/image';
 const page = () => {
 
     const router = useRouter()
+    const searchParams = useSearchParams()
     const peerID = usePeer(s => s.peerID)
+    const setPeerID = usePeer(s => s.setPeerID)
+    const setMyID = usePeer(s => s.setMyID)
     const isConnected = useConnection(s => s.isConnected)
+    const setIsConnected = useConnection(s => s.setIsConnected)
     const reciever = useConnection(s => s.reciver)
     const sender = useConnection(s => s.sender)
-    const resetConnection = useConnection(s=>s.reset)
-    const resetPeer = usePeer(s=>s.reset)
-    const resetShared = useShared(s=>s.reset)
+    const resetConnection = useConnection(s => s.reset)
+    const resetPeer = usePeer(s => s.reset)
+    const resetShared = useShared(s => s.reset)
     const fileCount = useShared(s => s.count)
     const setCount = useShared(s => s.setCount)
     const setfiles = useShared(s => s.setList)
     const setStatus = useShared(s => s.setStatus)
-    const startSession = useConnection(s=>s.startSession)
+    const startSession = useConnection(s => s.startSession)
+    const setStartSession = useConnection(s => s.setStartSession)
 
+    useEffect(() => {
+        if (searchParams.has('peerID')) {
+            const peerID = searchParams.get('peerID')
+            setStartSession(true)
+            connectToPeer(peerID!)
+        }
+    }, [])
 
     useEffect(() => {
         if (isConnected) handleConnection()
     }, [isConnected])
 
-    useEffect(()=>{
-        if(!startSession) router.push('/')
-    },[startSession])
+    useEffect(() => {
+        if (!startSession && !searchParams.has('peerID')) router.push('/')
+    }, [startSession])
+
+    const connectToPeer = async (peerID: string) => {
+        try {
+            const id = await PeerConnection.startPeerSession()
+            setMyID(id)
+            setPeerID(peerID)
+            await PeerConnection.startPeerSession()
+            await PeerConnection.connectPeer(peerID)
+            setIsConnected(true)
+        } catch (error) {
+            console.log(error);
+            router.push('/')
+        }
+    }
 
     const handleConnection = () => {
         PeerConnection.onConnectionDisconnected(peerID, () => {
             PeerConnection.closePeerSession()
             router.push('/')
             resetConnection()
-            resetPeer() 
+            resetPeer()
             resetShared()
         })
 
         PeerConnection.onConnectionReceiveData<Data>(peerID, (file) => {
             if (file.dataType === DataType.FILE) {
                 download(file.file || '', file.fileName || "fileName", file.fileType)
-                setStatus(file.id,true)
+                setStatus(file.id, true)
             }
-            
         })
 
         PeerConnection.onConnectionReceiveData<Pre>(peerID, (info) => {
@@ -83,18 +108,22 @@ const page = () => {
         return (<Send />)
     }
 
-    return(
-        <div className="flex flex-col gap-2 justify-center items-center p-12 w-screen h-screen ">
+    return (
+        <Suspense>
+            <div className="flex flex-col gap-2 justify-center items-center p-12 w-screen h-screen ">
             <Image
-            src={'/loading.gif'}
-            width={500}
-            height={400}
-            alt='loading'
-            className='rounded-lg w-full max-w-xl h-auto'
+                src={'/loading.gif'}
+                width={500}
+                height={400}
+                alt='loading'
+                className='rounded-lg w-full max-w-xl h-auto'
             />
             <p>Connecting...</p>
         </div>
+        </Suspense>
     )
+
+    
 }
 
 export default page

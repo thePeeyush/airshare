@@ -1,4 +1,4 @@
-
+'use server'
 type IceServers = {
   urls: string;
   username?: string;
@@ -9,8 +9,8 @@ type IceServers = {
 const getIceServer = async() => {
 
     let iceServers:IceServers = []
-    
-    await fetch(`https://airshare.metered.live/api/v1/turn/credentials?apiKey=31e4a6a30a62a0d9cf972663e428422cc852`)
+        
+    await fetch(`https://airshare.metered.live/api/v1/turn/credentials?apiKey=${process.env.METERED_KEY}`)
     .then(async(response:Response) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
@@ -20,7 +20,7 @@ const getIceServer = async() => {
       .catch((error) => {
         console.error("Error fetching TURN server credentials:", error);
       });
-
+      
       return iceServers
 }
 
