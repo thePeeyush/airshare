@@ -7,25 +7,24 @@ import { useConnection } from "@/store/connection";
 import { usePeer } from "@/store/peer";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { BsDownload, BsUpload } from "react-icons/bs";
 
 export default function Home() {
 
   const setMyID = usePeer(s => s.setMyID)
-  const myID = usePeer(s => s.myID)
   const setReciever = useConnection(s => s.setReciever)
   const setSender = useConnection(s => s.setSender)
   const setStartSession = useConnection(s => s.setStartSession)
+  const Router = useRouter()
 
-  
-
-  useEffect(()=>{
+  useEffect(() => {
     setSender(false)
     setReciever(false)
+    Disconnect()
     startSession()
-  },[])
-
+  }, [])
 
   const startSession = async () => {
     setStartSession(true)
@@ -33,7 +32,12 @@ export default function Home() {
     setMyID(id)
   }
 
-  const chooseMode = async(key:string) =>{
+  const Disconnect = async () => {
+    await PeerConnection.closePeerSession()
+    Router.push('/')
+  }
+
+  const chooseMode = async (key: string) => {
     key === 'sender' && setSender(true)
     key === 'reciever' && setReciever(true)
   }
@@ -63,7 +67,7 @@ export default function Home() {
         <Link onClick={() => chooseMode('reciever')} href={'/peer'}><Btn label="recieve"><BsDownload className="text-5xl group-hover:text-7xl  animate-bounce text-green-600" /></Btn></Link>
       </div>
       <div>
-        <LinkShare/>
+        <LinkShare />
       </div>
     </main>
   );

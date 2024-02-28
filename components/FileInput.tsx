@@ -20,10 +20,6 @@ const FileInput = () => {
         }
     };
 
-    useEffect(()=>{
-
-    },)
-
     const handleUpload = async () => {
         if (file !== null) {
             try {
