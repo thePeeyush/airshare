@@ -27,7 +27,6 @@ export default function Home() {
   }, [])
 
   const startSession = async () => {
-    setStartSession(true)
     const id = await PeerConnection.startPeerSession()
     setMyID(id)
   }
@@ -38,6 +37,7 @@ export default function Home() {
   }
 
   const chooseMode = async (key: string) => {
+    setStartSession(true)
     key === 'sender' && setSender(true)
     key === 'reciever' && setReciever(true)
   }
