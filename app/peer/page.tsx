@@ -42,15 +42,21 @@ const page = () => {
             setStartSession(true)
             connectToPeer(peerID!)
         }
+        if (!startSession && !searchParams.has('peerID')) router.push('/')
+
+        window.addEventListener('beforeunload', handleBeforeUnload);
+        return () => {
+          window.removeEventListener('beforeunload', handleBeforeUnload);
+        };
     }, [])
 
     useEffect(() => {
         if (isConnected) handleConnection()
     }, [isConnected])
 
-    useEffect(() => {
-        if (!startSession && !searchParams.has('peerID')) router.push('/')
-    }, [startSession])
+    const handleBeforeUnload = () =>{
+        PeerConnection.closePeerSession()
+    }
 
     const connectToPeer = async (peerID: string) => {
         try {
@@ -109,7 +115,6 @@ const page = () => {
     }
 
     return (
-        <Suspense>
             <div className="flex flex-col gap-2 justify-center items-center p-12 w-screen h-screen ">
             <Image
                 src={'/disconnected.png'}
@@ -118,9 +123,8 @@ const page = () => {
                 alt='loading'
                 className='rounded-lg w-full max-w-xl h-auto'
             />
-            <p>Connecting...</p>
+            <p>Disconnected...</p>
         </div>
-        </Suspense>
     )
 
     
