@@ -24,6 +24,7 @@ export default function Home() {
     setReciever(false)
     Disconnect()
     startSession()
+    setStartSession(true)
   }, [])
 
   const startSession = async () => {
@@ -34,12 +35,6 @@ export default function Home() {
   const Disconnect = async () => {
     await PeerConnection.closePeerSession()
     Router.push('/')
-  }
-
-  const chooseMode = async (key: string) => {
-    setStartSession(true)
-    key === 'sender' && setSender(true)
-    key === 'reciever' && setReciever(true)
   }
 
   return (
@@ -63,8 +58,8 @@ export default function Home() {
         <p className="text-center text-slate-500">Share any file on any device securely and seamlessly</p>
       </div>
       <div className="mt-6 flex">
-        <Link onClick={() => chooseMode('sender')} href={'/peer'}><Btn label="send"><BsUpload className=" text-5xl animate-bounce text-orange-600 group-hover:text-7xl" /></Btn></Link>
-        <Link onClick={() => chooseMode('reciever')} href={'/peer'}><Btn label="recieve"><BsDownload className="text-5xl group-hover:text-7xl  animate-bounce text-green-600" /></Btn></Link>
+        <Link onClick={() => setSender(true)} href={'/peer'}><Btn label="send"><BsUpload className=" text-5xl animate-bounce text-orange-600 group-hover:text-7xl" /></Btn></Link>
+        <Link onClick={() => setReciever(true)} href={'/peer'}><Btn label="recieve"><BsDownload className="text-5xl group-hover:text-7xl  animate-bounce text-green-600" /></Btn></Link>
       </div>
       <div>
         <LinkShare />
