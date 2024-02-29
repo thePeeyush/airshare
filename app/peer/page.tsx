@@ -10,8 +10,8 @@ import { useConnection } from '@/store/connection'
 import Recieve from '@/components/recieve'
 import Send from '@/components/send'
 import Head from '@/components/head'
-import SharedList from '@/components/sharedList'
-import useShared from '@/store/shared'
+import SharedList from '@/components/sharedFiles'
+import {useShared} from '@/store/files'
 import NotShared from '@/components/notShared'
 import Image from 'next/image';
 

@@ -5,20 +5,20 @@ import {
   CardDescription,
   CardHeader,
 } from "@/components/ui/card"
-import  useShared from "@/store/shared"
+import  {useShared} from "@/store/files"
 
 type CardProps = React.ComponentProps<typeof Card>
 
 const SharedList = ({ className, ...props }: CardProps) => {
     
-    const sharedFiles = useShared(s=>s.list);
+    const sharedFiles = useShared(s=>s.SharedFiles);
     const count = useShared(s=>s.count)
 
 
   return (
     <Card className={cn("w-[380px]", className)} {...props}>
       <CardHeader>
-        <CardDescription className="text-center">{count} shared files over this connection</CardDescription>
+        <CardDescription className="text-center">{count} files shared over this connection</CardDescription>
       </CardHeader>
       <CardContent className="grid gap-4 overflow-y-scroll h-[69vh] mb-[2vh] mx-4">
         <div>

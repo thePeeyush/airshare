@@ -1,19 +1,5 @@
 import { create } from "zustand";
 
-interface Connection {
-    isConnected : boolean,
-    reciver:boolean,
-    sender:boolean,
-    startSession:boolean,
-
-    setIsConnected : (bool:boolean) => void,
-    setReciever : (bool:boolean) => void,
-    setSender : (bool:boolean) => void,
-    setStartSession : (bool:boolean)=>void,
-    reset: () => void;
-
-}
-
 const useConnection  = create<Connection>()((set)=>({
     isConnected:false,
     reciver:false,
