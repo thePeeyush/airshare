@@ -46,7 +46,7 @@ const page = () => {
 
         window.addEventListener('beforeunload', handleBeforeUnload);
         return () => {
-          window.removeEventListener('beforeunload', handleBeforeUnload);
+            window.removeEventListener('beforeunload', handleBeforeUnload);
         };
     }, [])
 
@@ -54,7 +54,7 @@ const page = () => {
         if (isConnected) handleConnection()
     }, [isConnected])
 
-    const handleBeforeUnload = () =>{
+    const handleBeforeUnload = () => {
         PeerConnection.closePeerSession()
     }
 
@@ -114,8 +114,23 @@ const page = () => {
         return (<Send />)
     }
 
-    return (
+    if (searchParams.has('peerID')) {
+        return (
             <div className="flex flex-col gap-2 justify-center items-center p-12 w-screen h-screen ">
+                <Image
+                    src={'/connecting.gif'}
+                    width={500}
+                    height={400}
+                    alt='loading'
+                    className='rounded-lg w-full max-w-xl h-auto'
+                />
+                <p>Connecting...</p>
+            </div>
+        )
+    }
+
+    return (
+        <div className="flex flex-col gap-2 justify-center items-center p-12 w-screen h-screen ">
             <Image
                 src={'/disconnected.png'}
                 width={500}
@@ -123,11 +138,11 @@ const page = () => {
                 alt='loading'
                 className='rounded-lg w-full max-w-xl h-auto'
             />
-            <p>Disconnected...</p>
+            <p>Disconnected</p>
         </div>
     )
 
-    
+
 }
 
 export default page
