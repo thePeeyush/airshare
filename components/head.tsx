@@ -20,7 +20,7 @@ const Head = () => {
             <Image
                 src={'/logo.png'}
                 width={200}
-                height={80}
+                height={65}
                 alt='logo'
                 className='rounded-lg'
             />

@@ -41,8 +41,8 @@ export default function Home() {
     <main className=" flex flex-col justify-around  items-center px-8 h-[90vh] lg:h-[95vh]">
       <Image
         src={'/logo.png'}
-        width={500}
-        height={250}
+        width={502}
+        height={163}
         alt="logo"
         className=""
       />
@@ -51,7 +51,7 @@ export default function Home() {
         <Image
           src={'/2945466.jpg'}
           width={500}
-          height={500}
+          height={455}
           alt="img"
           className="max-w-[280px] md:max-w-xs"
         />

@@ -34,8 +34,8 @@ const Send = () => {
         <main className='flex flex-col justify-center items-center h-screen overflow-hidden max-w-lg mx-auto'>
             <Image
                 src={'/logo.png'}
-                width={500}
-                height={500}
+                width={502}
+                height={163}
                 alt="logo"
                 className=" z-50 absolute top-5 rounded-xl max-w-[250px]"
             />

@@ -119,8 +119,8 @@ const page = () => {
             <div className="flex flex-col gap-2 justify-center items-center p-12 w-screen h-screen ">
                 <Image
                     src={'/connecting.gif'}
-                    width={500}
-                    height={400}
+                    width={498}
+                    height={370}
                     alt='loading'
                     className='rounded-lg w-full max-w-xl h-auto'
                 />
