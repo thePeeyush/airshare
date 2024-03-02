@@ -64,16 +64,17 @@ const FileInput = () => {
 
     return (
         <div className='flex flex-col w-full max-w-xs gap-1.5 bottom-6 fixed '>
-            <div className={`flex flex-col p-4 space-y-2 bg-blue-100 rounded-xl ${selectedFiles.length < 1 && 'hidden'}`}>
+            <div className={`flex flex-col p-4 space-y-3 max-h-[70vh] overflow-y-scroll bg-blue-100 bg-opacity-30 backdrop-blur-md rounded-xl ${selectedFiles.length < 1 && 'hidden'}`}>
                 {
                     selectedFiles.map((file) => {
+                        const filesize = (file.size > 10e5 ? `${Math.ceil(file.size / 10e5)}MB` : `${Math.ceil(file.size / 10e2)}KB`) 
                         return (
                             <div className="flex justify-between space-x-2">
                                 <p className="text-sm font-medium leading-none text-ellipsis overflow-hidden whitespace-nowrap">
                                     {file.name}
                                 </p>
                                 <p className="text-sm text-muted-foreground">
-                                    {Math.floor(file.size / 1000)}KB
+                                    {filesize}
                                 </p>
                             </div>
                         )

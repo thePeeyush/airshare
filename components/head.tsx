@@ -6,6 +6,7 @@ import { Popover, PopoverContent, PopoverTrigger } from './ui/popover'
 import { usePeer } from '@/store/peer'
 import { PeerConnection } from '@/lib/peer'
 import { useRouter } from 'next/navigation'
+import Logo from './logo'
 
 const Head = () => {
     const peerID = usePeer(state => state.peerID)
@@ -17,13 +18,7 @@ const Head = () => {
     }
     return (
         <div className='flex justify-between p-2 rounded-lg w-full items-center'>
-            <Image
-                src={'/logo.png'}
-                width={200}
-                height={65}
-                alt='logo'
-                className='rounded-lg'
-            />
+            <Logo className='w-40 p-2 lg:max-w-xs bg-white rounded-md'/>
             <Popover>
                 <PopoverTrigger >
                     <Avatar className='shadow-xl shadow-green-300'>

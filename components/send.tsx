@@ -7,6 +7,7 @@ import { PeerConnection } from '@/lib/peer';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { useConnection } from '@/store/connection';
+import Logo from './logo';
 
 
 const Send = () => {
@@ -32,13 +33,7 @@ const Send = () => {
 
     return (
         <main className='flex flex-col justify-center items-center h-screen overflow-hidden max-w-lg mx-auto'>
-            <Image
-                src={'/logo.png'}
-                width={502}
-                height={163}
-                alt="logo"
-                className=" z-50 absolute top-5 rounded-xl max-w-[250px]"
-            />
+            <Logo className='fixed top-0 z-50 max-w-[250px]'/>
             {
                 peerID === '' ? (
                     <>
@@ -58,12 +53,12 @@ const Send = () => {
                         <>
                             <Image
                                 src={'/connecting.gif'}
-                                width={300}
-                                height={400}
+                                width={900}
+                                height={1200}
                                 alt='connecting'
                                 className=' rounded-lg'
                             />
-                            <h1 className='text-center p-4 border-green-400 text-green-500 rounded-md'>🌐{peerID}</h1>
+                            <h1 className='text-center p-4 border-green-400 text-green-500 rounded-md w-full max-w-4xl'>🌐{peerID}</h1>
                         </>
                     )
             }

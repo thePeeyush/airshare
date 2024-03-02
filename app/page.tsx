@@ -2,6 +2,7 @@
 
 import Btn from "@/components/btn";
 import LinkShare from "@/components/link";
+import Logo from "@/components/logo";
 import { PeerConnection } from "@/lib/peer";
 import { useConnection } from "@/store/connection";
 import { usePeer } from "@/store/peer";
@@ -38,18 +39,12 @@ export default function Home() {
   }
 
   return (
-    <main className=" flex flex-col justify-around  items-center px-8 h-[90vh] lg:h-[95vh]">
-      <Image
-        src={'/logo.png'}
-        width={502}
-        height={163}
-        alt="logo"
-        className=""
-      />
+    <main className=" flex flex-col justify-around  items-center px-8 pb-8 min-h-screen">
+      <Logo/>
       <p className="text-xs text-gray-400">🔒 end to end encrypted</p>
       <div className="flex flex-col items-center">
         <Image
-          src={'/2945466.jpg'}
+          src={'/share.svg'}
           width={500}
           height={455}
           alt="img"

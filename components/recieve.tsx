@@ -6,7 +6,7 @@ import { PeerConnection } from '@/lib/peer'
 import { usePeer } from '@/store/peer'
 import { useRouter } from 'next/navigation'
 import { useConnection } from '@/store/connection'
-import Image from 'next/image'
+import Logo from './logo'
 
 const Recieve = () => {
 
@@ -29,13 +29,7 @@ const Recieve = () => {
 
   return (
     <div className='flex  flex-col justify-center items-center h-screen '>
-      <Image
-        src={'/logo.png'}
-        width={502}
-        height={163}
-        alt="logo"
-        className=" z-50 absolute top-5 rounded-xl max-w-[250px]"
-      />
+      <Logo className='fixed top-0 z-50 max-w-[250px]' />
       <h1 className='m-10'>Scan this QR to send files</h1>
       {myID !== '' ? <QRCode className='p-4 bg-white shadow-blue-400 shadow-2xl rounded-xl' value={myID} /> : <h1 className=' animate-pulse'>Generating ... </h1>}
     </div>

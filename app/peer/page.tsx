@@ -132,7 +132,7 @@ const page = () => {
     return (
         <div className="flex flex-col gap-2 justify-center items-center p-12 w-screen h-screen ">
             <Image
-                src={'/disconnected.png'}
+                src={'/disconnected.svg'}
                 width={500}
                 height={400}
                 alt='loading'
