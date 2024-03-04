@@ -73,3 +73,15 @@ background-position: center;
 ::-webkit-scrollbar{
   display: none;
 }
+
+.shake{
+  animation: horizontal-shaking 0.5s linear infinite ;
+}
+
+@keyframes horizontal-shaking {
+  0% { transform: translateX(0) }
+  25% { transform: translateX(5px) }
+  50% { transform: translateX(-5px) }
+  75% { transform: translateX(5px) }
+  100% { transform: translateX(0) }
+ }

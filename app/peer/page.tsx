@@ -2,7 +2,7 @@
 
 import { Data, DataType, PeerConnection, Pre } from '@/lib/peer'
 import { useRouter, useSearchParams } from 'next/navigation'
-import React, { Suspense, useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import download from "js-file-download";
 import FileInput from '@/components/FileInput'
 import { usePeer } from '@/store/peer'
@@ -11,7 +11,7 @@ import Recieve from '@/components/recieve'
 import Send from '@/components/send'
 import Head from '@/components/head'
 import SharedList from '@/components/sharedFiles'
-import {useShared} from '@/store/files'
+import { useSelected, useShared } from '@/store/files'
 import NotShared from '@/components/notShared'
 import Image from 'next/image';
 
@@ -35,6 +35,8 @@ const page = () => {
     const setStatus = useShared(s => s.setStatus)
     const startSession = useConnection(s => s.startSession)
     const setStartSession = useConnection(s => s.setStartSession)
+    const setSelectedFiles = useSelected(s => s.setList)
+    const dragRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
         if (searchParams.has('peerID')) {
@@ -56,6 +58,30 @@ const page = () => {
 
     const handleBeforeUnload = () => {
         PeerConnection.closePeerSession()
+    }
+
+    const handleDrop = (e: React.DragEvent<HTMLElement>) => {
+        e.preventDefault()
+        const files = e.dataTransfer.files
+        dragRef.current?.classList.remove('shake')
+        if (files && files.length > 0) {
+            for (let key in files) {
+                if (files.hasOwnProperty(key)) {
+                    setSelectedFiles(files[key])
+                }
+            }
+        }
+    }
+
+    const handleDragEnter = (e: React.DragEvent<HTMLElement>) => {
+        e.preventDefault()
+        dragRef.current?.classList.add('shake')
+    }
+
+    const handleDragLeave = (e: React.DragEvent<HTMLElement>) => {
+        e.preventDefault()
+        dragRef.current?.classList.remove('shake')
+
     }
 
     const connectToPeer = async (peerID: string) => {
@@ -98,10 +124,13 @@ const page = () => {
 
     if (isConnected) {
         return (
-            <main className='flex flex-col justify-between items-center p-4 peer-bg'>
-                <Head />
-                {fileCount !== 0 ? <SharedList className='bg-transparent border-none' /> : <NotShared />}
-                <FileInput />
+            <main onDrop={e => handleDrop(e)} onDragEnter={e => handleDragEnter(e)} onDragLeave={e => handleDragLeave(e)} onDragOver={e => e.preventDefault()} className='peer-bg min-h-screen'>
+                <div ref={dragRef} className='flex flex-col justify-between items-center p-4 max-w'>
+                    <Head />
+                    {fileCount !== 0 ? <SharedList className='bg-transparent border-none' /> : <NotShared />}
+                    <FileInput />
+                </div>
+
             </main>
         )
     }

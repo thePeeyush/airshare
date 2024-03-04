@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import { usePeer } from '@/store/peer'
-import getBaseURL from '@/utils/getURL'
+import getBaseURL from '@/lib/getURL'
 import { Button } from './ui/button'
 import { PeerConnection } from '@/lib/peer'
 import { useConnection } from '@/store/connection'

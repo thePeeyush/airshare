@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { Input } from "@/components/ui/input"
 import { Button } from './ui/button'
 import { DataType, PeerConnection } from '@/lib/peer'
@@ -37,7 +37,7 @@ const FileInput = () => {
             })
             setfiles({ id: id, name: file.name, size: file.size, status: false })
             setCount()
-            await PeerConnection.sendConnection(peerID, {
+                         await PeerConnection.sendConnection(peerID, {
                 id: id,
                 dataType: DataType.FILE,
                 file: blob,

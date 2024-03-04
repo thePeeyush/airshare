@@ -1,4 +1,4 @@
-import getIceServer from "@/utils/getIceServer";
+import getIceServer from "@/lib/getIceServer";
 import Peer, {DataConnection,} from "airsharejs";
 
 export enum DataType {
