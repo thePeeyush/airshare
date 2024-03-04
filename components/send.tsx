@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { useConnection } from '@/store/connection';
 import Logo from './logo';
+import { toast } from './ui/use-toast';
 
 
 const Send = () => {
@@ -30,10 +31,20 @@ const Send = () => {
         }
     }
 
+    const extractPeerID = (url: string) => {
+        const params = new URLSearchParams(new URL(url).search);
+        const peerID = params.get("peerID");
+        if (peerID !== null) { setPeerID(peerID) }
+        else {
+            toast({
+                description: "Please scan a valid QR from Airhsre"
+            })
+        }
+    }
 
     return (
         <main className='flex flex-col justify-center items-center h-screen overflow-hidden max-w-lg mx-auto'>
-            <Logo className='fixed top-0 z-50 max-w-[250px]'/>
+            <Logo className='fixed top-0 z-50 max-w-[250px]' />
             {
                 peerID === '' ? (
                     <>
@@ -43,7 +54,7 @@ const Send = () => {
                             scanDelay={300}
                             onResult={(result) => {
                                 if (result) {
-                                    setPeerID(result['text'])
+                                    extractPeerID(result['text'])
                                 }
                             }} />
                         <h1>Scan QR to send</h1>

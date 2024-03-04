@@ -7,6 +7,7 @@ import { usePeer } from '@/store/peer'
 import { useRouter } from 'next/navigation'
 import { useConnection } from '@/store/connection'
 import Logo from './logo'
+import getBaseURL from '@/lib/getURL'
 
 const Recieve = () => {
 
@@ -31,7 +32,7 @@ const Recieve = () => {
     <div className='flex  flex-col justify-center items-center h-screen '>
       <Logo className='fixed top-0 z-50 max-w-[250px]' />
       <h1 className='m-10'>Scan this QR to send files</h1>
-      {myID !== '' ? <QRCode className='p-4 bg-white shadow-blue-400 shadow-2xl rounded-xl' value={myID} /> : <h1 className=' animate-pulse'>Generating ... </h1>}
+      {myID !== '' ? <QRCode className='p-4 bg-white shadow-blue-400 shadow-2xl rounded-xl' value={`${getBaseURL()}peer?peerID=${myID}`} /> : <h1 className=' animate-pulse'>Generating ... </h1>}
     </div>
   )
 }
