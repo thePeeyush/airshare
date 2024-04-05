@@ -10,7 +10,7 @@ const Logo = ({className}:Props) => {
   return (
     <Image
         src={'/logo.svg'}
-        width={502}
+        width={402}
         height={163}
         alt="logo"
         className={className+" p-10"}

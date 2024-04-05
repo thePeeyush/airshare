@@ -57,7 +57,7 @@ const Send = () => {
                                     extractPeerID(result['text'])
                                 }
                             }} />
-                        <h1>Scan QR to send</h1>
+                        <h1>Scan QR to connect</h1>
                     </>
                 )
                     : (

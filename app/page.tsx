@@ -10,7 +10,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { BsDownload, BsUpload } from "react-icons/bs";
+import { IoIosQrScanner } from "react-icons/io";
+import { HiOutlineQrCode } from "react-icons/hi2";
 
 export default function Home() {
 
@@ -53,8 +54,8 @@ export default function Home() {
         <p className="text-center text-slate-500">Share any file on any device securely and seamlessly</p>
       </div>
       <div className="mt-6 flex">
-        <Link onClick={() => setSender(true)} href={'/peer'}><Btn label="send"><BsUpload className=" text-5xl animate-bounce text-orange-600 group-hover:text-7xl" /></Btn></Link>
-        <Link onClick={() => setReciever(true)} href={'/peer'}><Btn label="recieve"><BsDownload className="text-5xl group-hover:text-7xl  animate-bounce text-green-600" /></Btn></Link>
+        <Link onClick={() => setSender(true)} href={'/peer'}><Btn label="Scan"><IoIosQrScanner className=" text-5xl animate-bounce text-orange-600 group-hover:text-7xl" /></Btn></Link>
+        <Link onClick={() => setReciever(true)} href={'/peer'}><Btn label="Show"><HiOutlineQrCode className="text-5xl group-hover:text-7xl  animate-bounce text-green-600" /></Btn></Link>
       </div>
       <div>
         <LinkShare />
