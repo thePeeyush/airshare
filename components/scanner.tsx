@@ -62,14 +62,16 @@ const Send = () => {
                 )
                     : (
                         <>
-                            <Image
-                                src={'/connecting.gif'}
-                                width={900}
-                                height={1200}
-                                alt='connecting'
-                                className=' rounded-lg'
-                            />
-                            <h1 className='text-center p-4 border-green-400 text-green-500 rounded-md w-full max-w-4xl'>🌐{peerID}</h1>
+                            <div className="text-center">
+                                <Image
+                                    src={'/connecting.gif'}
+                                    width={498}
+                                    height={370}
+                                    alt='loading'
+                                    className='rounded-lg w-full max-w-xl h-auto'
+                                />
+                                <p className='text-white'>Connecting...</p>
+                            </div>
                         </>
                     )
             }

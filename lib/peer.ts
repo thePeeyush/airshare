@@ -31,9 +31,9 @@ export const PeerConnection = {
         try {
             const iceServers = await getIceServer()            
             peer = new Peer({
-                // config:{
-                //     iceServers:iceServers
-                // }
+                config:{
+                    iceServers:iceServers
+                }
             })
             peer.on('open', (id) => {
                 resolve(id)
