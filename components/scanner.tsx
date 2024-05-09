@@ -43,7 +43,7 @@ const Send = () => {
     }
 
     return (
-        <main className='flex flex-col justify-center items-center h-screen overflow-hidden max-w-lg mx-auto'>
+        <main className='flex flex-col justify-center items-center h-screen overflow-hidden w-full min-w-[350px] max-w-lg mx-auto'>
             <Logo className='fixed top-0 z-50 max-w-[250px]' />
             {
                 peerID === '' ? (
@@ -57,7 +57,7 @@ const Send = () => {
                                     extractPeerID(result['text'])
                                 }
                             }} />
-                        <h1>Scan QR to connect</h1>
+                        <h1 className='text-gray-200'>Scan QR to connect</h1>
                     </>
                 )
                     : (

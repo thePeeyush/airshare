@@ -28,24 +28,40 @@ const FileInput = () => {
 
     const uploadFile = async (file: File) => {
         try {
-            const blob = new Blob([file], { type: file.type })
+            // const blob = new Blob([file], { type: file.type })
             const id = Math.floor(Math.random() * 10e6)
             await PeerConnection.sendConnection(peerID, {
                 id: id,
-                filename: file.name,
+                fileName: file.name,
                 filesize: file.size,
+                datatype: DataType.OTHER,
+                filetype: file.type,
             })
             setfiles({ id: id, name: file.name, size: file.size, status: false })
             setCount()
-                         await PeerConnection.sendConnection(peerID, {
-                id: id,
-                dataType: DataType.FILE,
-                file: blob,
-                fileName: file.name,
-                fileType: file.type
-            })
-            setStatus(id, true)
-            console.log('data send successfully')
+            //              await PeerConnection.sendConnection(peerID, {
+            //     id: id,
+            //     dataType: DataType.FILE,
+            //     file: blob,
+            //     fileName: file.name,
+            //     fileType: file.type
+            // })
+            // setStatus(id, true)
+            // console.log('data send successfully')
+
+            const fileStream = file.stream()
+            const reader = fileStream.getReader();
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) {
+                    break;
+                }
+                await PeerConnection.sendConnection(peerID, {
+                    id: id,
+                    datatype: DataType.CHUNK,
+                    data: value,
+                })
+            }
 
         } catch (error) {
             console.log(error);
@@ -67,7 +83,7 @@ const FileInput = () => {
             <div className={`flex flex-col p-4 space-y-3 max-h-[70vh] overflow-y-scroll bg-blue-100 bg-opacity-30 backdrop-blur-md rounded-xl ${selectedFiles.length < 1 && 'hidden'}`}>
                 {
                     selectedFiles.map((file) => {
-                        const filesize = (file.size > 10e5 ? `${Math.ceil(file.size / 10e5)}MB` : `${Math.ceil(file.size / 10e2)}KB`) 
+                        const filesize = (file.size > 10e5 ? `${Math.ceil(file.size / 10e5)}MB` : `${Math.ceil(file.size / 10e2)}KB`)
                         return (
                             <div className="flex justify-between space-x-2">
                                 <p className="text-sm font-medium leading-none text-ellipsis overflow-hidden whitespace-nowrap">

@@ -47,7 +47,7 @@ const LinkShare = () => {
     }
 
     return (
-        <Button onClick={()=>setClicked(true)} variant='outline' className='rounded-full w-48'>{
+        <Button onClick={()=>setClicked(true)} variant='outline' className='rounded-full w-48 bg-transparent backdrop-blur-sm text-white'>{
             copied ? <>Copied</>
                 : (clicked && !generated ? <>Generating...</>
                     : <>Share Link</>)

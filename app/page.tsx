@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { IoIosQrScanner } from "react-icons/io";
 import { HiOutlineQrCode } from "react-icons/hi2";
+import { WavyBackground } from "@/components/ui/wavy-background";
 
 export default function Home() {
 
@@ -40,7 +41,7 @@ export default function Home() {
   }
 
   return (
-    <main className=" flex flex-col justify-around  items-center px-8 pb-8 min-h-[90vh] lg:min-h-screen">
+    <main className=" flex flex-col justify-around  items-center px-8 pb-8 min-h-[90vh] lg:min-h-screen backdrop-blur-2xl">
       <Logo/>
       <p className="text-xs text-gray-400">🔒 end to end encrypted</p>
       <div className="flex flex-col items-center">
@@ -49,9 +50,9 @@ export default function Home() {
           width={500}
           height={455}
           alt="img"
-          className="max-w-[280px] md:max-w-xs"
+          className="w-full md:max-w-lg"
         />
-        <p className="text-center text-slate-500">Share any file on any device securely and seamlessly</p>
+        <p className="text-center text-slate-200">Share any file on any device securely and seamlessly</p>
       </div>
       <div className="mt-6 flex">
         <Link onClick={() => setSender(true)} href={'/peer'}><Btn label="Scan"><IoIosQrScanner className=" text-5xl animate-bounce text-orange-600 group-hover:text-7xl" /></Btn></Link>

@@ -1,6 +1,6 @@
 'use client'
 
-import { Data, DataType, PeerConnection, Pre } from '@/lib/peer'
+import { Data, DataType, PeerConnection, Pre, Post } from '@/lib/peer'
 import { useRouter, useSearchParams } from 'next/navigation'
 import React, { useEffect, useRef } from 'react'
 import download from "js-file-download";
@@ -107,19 +107,50 @@ const page = () => {
             resetShared()
         })
 
-        PeerConnection.onConnectionReceiveData<Data>(peerID, (file) => {
-            if (file.dataType === DataType.FILE) {
-                download(file.file || '', file.fileName || "fileName", file.fileType)
-                setStatus(file.id, true)
-            }
-        })
+        let fileDetails = {
+            id: 0,
+            name: '',
+            size: 0,
+            status: false,
+            type: ''
+        }
 
         PeerConnection.onConnectionReceiveData<Pre>(peerID, (info) => {
-            if (info.filename) {
-                setfiles({ id: info.id, name: info.filename, size: info.filesize, status: false })
+            if (info.fileName) {
+                setfiles({ id: info.id, name: info.fileName, size: info.filesize, status: false })
+                fileDetails = { id: info.id, name: info.fileName, size: info.filesize, type: info.filetype, status: false }
                 setCount()
             }
         })
+
+        PeerConnection.onConnectionReceiveData<Data>(peerID, (file) => {
+            if (file.datatype === DataType.CHUNK && file.id === fileDetails.id) {
+                let offset = 0;
+                const fileArray = new Uint8Array(fileDetails.size)
+                if( offset < fileDetails.size){
+                    fileArray.set(file.data, offset)
+                    offset += file.data.length
+                }
+                if (fileArray.length === fileDetails.size) {
+                    const blob = new Blob([fileArray], { type: fileDetails.type })
+                    download(blob, fileDetails.name);
+                }
+            }
+        })
+
+        PeerConnection.onConnectionReceiveData<Post>(peerID, (info) => {
+            if(info.id === fileDetails.id  && info.done) {
+                setStatus(info.id, true)
+                fileDetails = {
+                    id: 0,
+                    name: '',
+                    size: 0,
+                    status: false,
+                    type: ''
+                }
+            }
+        })
+
     }
 
     if (isConnected) {

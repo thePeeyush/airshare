@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
+import { WavyBackground } from "@/components/ui/wavy-background";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,9 +18,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
-      <main className={inter.className}>{children}</main>
-      <Toaster/>
+      <body className="bg-black">
+        <WavyBackground className="max-w-4xl mx-auto">
+          <main className={inter.className}>
+            {children}
+          </main>
+        </WavyBackground>
+        <Toaster />
       </body>
     </html>
   );
