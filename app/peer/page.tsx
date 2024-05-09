@@ -1,6 +1,6 @@
 'use client'
 
-import { Data, DataType, PeerConnection, Pre, Post } from '@/lib/peer'
+import { Data, DataType, PeerConnection, Pre } from '@/lib/peer'
 import { useRouter, useSearchParams } from 'next/navigation'
 import React, { useEffect, useRef } from 'react'
 import download from "js-file-download";
@@ -107,50 +107,19 @@ const page = () => {
             resetShared()
         })
 
-        let fileDetails = {
-            id: 0,
-            name: '',
-            size: 0,
-            status: false,
-            type: ''
-        }
+        PeerConnection.onConnectionReceiveData<Data>(peerID, (file) => {
+            if (file.dataType === DataType.FILE) {
+                download(file.file || '', file.fileName || "fileName", file.fileType)
+                setStatus(file.id, true)
+            }
+        })
 
         PeerConnection.onConnectionReceiveData<Pre>(peerID, (info) => {
-            if (info.fileName) {
-                setfiles({ id: info.id, name: info.fileName, size: info.filesize, status: false })
-                fileDetails = { id: info.id, name: info.fileName, size: info.filesize, type: info.filetype, status: false }
+            if (info.filename) {
+                setfiles({ id: info.id, name: info.filename, size: info.filesize, status: false })
                 setCount()
             }
         })
-
-        PeerConnection.onConnectionReceiveData<Data>(peerID, (file) => {
-            if (file.datatype === DataType.CHUNK && file.id === fileDetails.id) {
-                let offset = 0;
-                const fileArray = new Uint8Array(fileDetails.size)
-                if( offset < fileDetails.size){
-                    fileArray.set(file.data, offset)
-                    offset += file.data.length
-                }
-                if (fileArray.length === fileDetails.size) {
-                    const blob = new Blob([fileArray], { type: fileDetails.type })
-                    download(blob, fileDetails.name);
-                }
-            }
-        })
-
-        PeerConnection.onConnectionReceiveData<Post>(peerID, (info) => {
-            if(info.id === fileDetails.id  && info.done) {
-                setStatus(info.id, true)
-                fileDetails = {
-                    id: 0,
-                    name: '',
-                    size: 0,
-                    status: false,
-                    type: ''
-                }
-            }
-        })
-
     }
 
     if (isConnected) {
@@ -176,7 +145,7 @@ const page = () => {
 
     if (searchParams.has('peerID')) {
         return (
-            <div className="flex flex-col gap-2 justify-center items-center p-12 w-screen h-screen ">
+            <div className="flex flex-col gap-2 justify-center items-center p-12 w-screen h-screen">
                 <Image
                     src={'/connecting.gif'}
                     width={498}
@@ -206,4 +175,3 @@ const page = () => {
 }
 
 export default page
-
