@@ -124,8 +124,8 @@ const page = () => {
 
     if (isConnected) {
         return (
-            <main onDrop={e => handleDrop(e)} onDragEnter={e => handleDragEnter(e)} onDragLeave={e => handleDragLeave(e)} onDragOver={e => e.preventDefault()} className='peer-bg min-h-screen'>
-                <div ref={dragRef} className='flex flex-col justify-between items-center p-4 max-w'>
+            <main onDrop={e => handleDrop(e)} onDragEnter={e => handleDragEnter(e)} onDragLeave={e => handleDragLeave(e)} onDragOver={e => e.preventDefault()} className='w-screen md:min-w-[700px] md:w-auto'>
+                <div ref={dragRef} className='flex flex-col justify-between items-center w-full'>
                     <Head />
                     {fileCount !== 0 ? <SharedList className='bg-transparent border-none' /> : <NotShared />}
                     <FileInput />
@@ -145,7 +145,7 @@ const page = () => {
 
     if (searchParams.has('peerID')) {
         return (
-            <div className="flex flex-col gap-2 justify-center items-center p-12 w-screen h-screen">
+            <div className="text-center">
                 <Image
                     src={'/connecting.gif'}
                     width={498}
@@ -153,13 +153,13 @@ const page = () => {
                     alt='loading'
                     className='rounded-lg w-full max-w-xl h-auto'
                 />
-                <p>Connecting...</p>
+                <p className='text-white'>Connecting...</p>
             </div>
         )
     }
 
     return (
-        <div className="flex flex-col gap-2 justify-center items-center p-12 w-screen h-screen ">
+        <div className="text-center">
             <Image
                 src={'/disconnected.svg'}
                 width={500}
@@ -167,7 +167,7 @@ const page = () => {
                 alt='loading'
                 className='rounded-lg w-full max-w-xl h-auto'
             />
-            <p>Disconnected</p>
+            <p className='text-white'>Disconnected</p>
         </div>
     )
 

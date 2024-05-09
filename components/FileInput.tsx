@@ -63,17 +63,17 @@ const FileInput = () => {
     }
 
     return (
-        <div className='flex flex-col w-full max-w-xs gap-1.5 bottom-6 fixed '>
-            <div className={`flex flex-col p-4 space-y-3 max-h-[70vh] overflow-y-scroll bg-blue-100 bg-opacity-30 backdrop-blur-md rounded-xl ${selectedFiles.length < 1 && 'hidden'}`}>
+        <div className='flex flex-col w-full max-w-xl gap-1.5 bottom-6 fixed  px-4 md:px-0'>
+            <div className={`flex flex-col p-4 space-y-3 max-h-[70vh] overflow-y-scroll bg-black bg-opacity-40 backdrop-blur-md rounded-xl ${selectedFiles.length < 1 && 'hidden'}`}>
                 {
                     selectedFiles.map((file) => {
-                        const filesize = (file.size > 10e5 ? `${Math.ceil(file.size / 10e5)}MB` : `${Math.ceil(file.size / 10e2)}KB`) 
+                        const filesize = (file.size > 10e5 ? `${Math.ceil(file.size / 10e5)} MB` : `${Math.ceil(file.size / 10e2)} KB`) 
                         return (
                             <div className="flex justify-between space-x-2">
-                                <p className="text-sm font-medium leading-none text-ellipsis overflow-hidden whitespace-nowrap">
+                                <p className="text-sm text-white font-medium leading-none text-ellipsis overflow-hidden whitespace-nowrap">
                                     {file.name}
                                 </p>
-                                <p className="text-sm text-muted-foreground">
+                                <p className="text-sm text-gray-400 min-w-fit">
                                     {filesize}
                                 </p>
                             </div>
@@ -81,9 +81,9 @@ const FileInput = () => {
                     })
                 }
             </div>
-            <div className="flex w-full items-center justify-centerd gap-1.5">
-                <Input id="file" multiple={true} type="file" onChange={e => handleFileChange(e)} />
-                <Button disabled={selectedFiles.length < 1} onClick={handleUpload} ><RiSendPlaneLine /></Button>
+            <div className="flex w-full items-center justify-centerd gap-1.5 bg-white rounded-full border-4 border-white">
+                <Input id="file" multiple={true} type="file" className='rounded-full border-none' onChange={e => handleFileChange(e)} />
+                <Button disabled={selectedFiles.length < 1} onClick={handleUpload} className='rounded-full' ><RiSendPlaneLine /></Button>
             </div>
         </div>
 
