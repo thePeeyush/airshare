@@ -2,23 +2,38 @@ import getIceServer from "@/lib/getIceServer";
 import Peer, {DataConnection,} from "airsharejs";
 
 export enum DataType {
-    FILE = 'FILE',
-    OTHER = 'OTHER'
-
+    CHUNK = 'CHUNK',
+    PRE = 'PRE',
+    POST = 'POST',
+    MESSAGE = 'MESSAGE',
 }
-export interface Data {
+// export interface Data {
+//     id:number
+//     dataType: DataType
+//     file?: Blob
+//     fileName?: string
+//     fileType?: string
+//     message?: string
+// }
+
+export interface Chunk {
     id:number
     dataType: DataType
-    file?: Blob
-    fileName?: string
-    fileType?: string
-    message?: string
+    chunk: Uint8Array
+    chunkSerial: number
 }
-
 
 export interface Pre {
     id:number
+    dataType: DataType
     filename:string
+    filesize:number
+    filetype:string
+}
+
+export interface Post {
+    id:number
+    dataType: DataType
     filesize:number
 }
 
@@ -108,7 +123,7 @@ export const PeerConnection = {
             });
         }
     },
-    sendConnection: (id: string, data: Data|Pre): Promise<void> => new Promise((resolve, reject) => {
+    sendConnection: (id: string, data: Pre|Chunk|Post): Promise<void> => new Promise((resolve, reject) => {
         if (!connectionMap.has(id)) {
             reject(new Error("Connection didn't exist"))
         }
@@ -123,7 +138,7 @@ export const PeerConnection = {
         resolve()
     }),
 
-    onConnectionReceiveData:<T extends (Data|Pre)>(id: string, callback: (f: T) => void) => {
+    onConnectionReceiveData:<T extends (Pre|Chunk|Post)>(id: string, callback: (f: T) => void) => {
         if (!peer) {
             throw new Error("Peer doesn't start yet")
         }
@@ -131,11 +146,10 @@ export const PeerConnection = {
             throw new Error("Connection didn't exist")
         }
         let conn = connectionMap.get(id)
-        let dataSize = 0
         if (conn) {
             conn.on('data', function (receivedData) {
-                console.log(receivedData);
-                console.log("Receiving data from " + id)
+                // console.log(receivedData);
+                // console.log("Receiving data from " + id)
                 let data = receivedData as T
                 callback(data)
             })

@@ -1,6 +1,6 @@
 'use client'
 
-import { Data, DataType, PeerConnection, Pre } from '@/lib/peer'
+import { DataType, PeerConnection, Pre, Chunk, Post } from '@/lib/peer'
 import { useRouter, useSearchParams } from 'next/navigation'
 import React, { useEffect, useRef } from 'react'
 import download from "js-file-download";
@@ -14,6 +14,7 @@ import SharedList from '@/components/sharedFiles'
 import { useSelected, useShared } from '@/store/files'
 import NotShared from '@/components/notShared'
 import Image from 'next/image';
+import streamSaver from "streamsaver";
 
 const page = () => {
 
@@ -99,6 +100,11 @@ const page = () => {
     }
 
     const handleConnection = () => {
+        let serial = 0;
+        let fileSize = 0;
+        let currentSize = 0;
+        let fileID = 0;
+
         PeerConnection.onConnectionDisconnected(peerID, () => {
             PeerConnection.closePeerSession()
             router.push('/')
@@ -107,19 +113,45 @@ const page = () => {
             resetShared()
         })
 
-        PeerConnection.onConnectionReceiveData<Data>(peerID, (file) => {
-            if (file.dataType === DataType.FILE) {
-                download(file.file || '', file.fileName || "fileName", file.fileType)
-                setStatus(file.id, true)
+        PeerConnection.onConnectionReceiveData<Pre>(peerID, (info) => {
+            if (info.dataType === DataType.PRE) {
+                setfiles({ id: info.id, name: info.filename, size: info.filesize, type: info.filetype, status: false })
+                setCount()
+                const fileStream = streamSaver.createWriteStream(info.filename, {
+                    size: info.filesize
+                })
+                console.log(info);
+                fileSize = info.filesize
+                fileID = info.id
+                saveStream(fileStream)
             }
         })
 
-        PeerConnection.onConnectionReceiveData<Pre>(peerID, (info) => {
-            if (info.filename) {
-                setfiles({ id: info.id, name: info.filename, size: info.filesize, status: false })
-                setCount()
-            }
-        })
+        const saveStream = (fileStream: WritableStream<any>) => {
+            const writer = fileStream.getWriter()
+
+            PeerConnection.onConnectionReceiveData<Chunk>(peerID, (chunk) => {
+                if (chunk.dataType === DataType.CHUNK) {
+                    if (chunk.chunkSerial === serial) {
+                        console.log("chunk no:", chunk.chunkSerial, chunk.chunk);
+                        writer.write(chunk.chunk)
+                        currentSize += chunk.chunk.byteLength
+                    }
+                    else console.log('chunk error', serial);
+                    serial++;
+                }
+            })
+
+            PeerConnection.onConnectionReceiveData<Post>(peerID, (info) => {
+                if (info.dataType === DataType.POST) {
+                    writer.close()
+                    console.log(info);
+                    serial = 0;
+                    setStatus(info.id, true)
+                }
+            })
+            
+        }
     }
 
     if (isConnected) {
@@ -170,8 +202,6 @@ const page = () => {
             <p className='text-white'>Disconnected</p>
         </div>
     )
-
-
 }
 
 export default page

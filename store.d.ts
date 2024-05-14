@@ -21,6 +21,7 @@ type SharedFile = {
   name: string;
   size: number;
   status: boolean;
+  type: string;
 };
 
 interface files extends Array<SharedFile> {}

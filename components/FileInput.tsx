@@ -1,10 +1,11 @@
 import React from 'react'
 import { Input } from "@/components/ui/input"
 import { Button } from './ui/button'
-import { DataType, PeerConnection } from '@/lib/peer'
+import { DataType, PeerConnection, Pre } from '@/lib/peer'
 import { usePeer } from '@/store/peer'
 import { RiSendPlaneLine } from "react-icons/ri";
 import { useShared, useSelected } from '@/store/files'
+import { readChunk } from '@/lib/service'
 
 const FileInput = () => {
     const peerID = usePeer(s => s.peerID)
@@ -14,6 +15,8 @@ const FileInput = () => {
     const selectedFiles = useSelected(s => s.SelectedFiles)
     const setSelectedFiles = useSelected(s => s.setList)
     const clearSelectedFiles = useSelected(s => s.reset)
+    const id = Math.floor(Math.random() * 10e6)
+
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const files = event.target.files;
@@ -27,22 +30,21 @@ const FileInput = () => {
     };
 
     const uploadFile = async (file: File) => {
+        
         try {
-            const blob = new Blob([file], { type: file.type })
-            const id = Math.floor(Math.random() * 10e6)
             await PeerConnection.sendConnection(peerID, {
                 id: id,
+                dataType: DataType.PRE,
                 filename: file.name,
                 filesize: file.size,
             })
-            setfiles({ id: id, name: file.name, size: file.size, status: false })
+            setfiles({ id: id, name: file.name, type: file.type , size: file.size, status: false })
             setCount()
-                         await PeerConnection.sendConnection(peerID, {
+            await readChunk(file,sendChunk);
+            await PeerConnection.sendConnection(peerID, {
                 id: id,
-                dataType: DataType.FILE,
-                file: blob,
-                fileName: file.name,
-                fileType: file.type
+                dataType: DataType.POST,
+                filesize: file.size,
             })
             setStatus(id, true)
             console.log('data send successfully')
@@ -50,6 +52,17 @@ const FileInput = () => {
         } catch (error) {
             console.log(error);
         }
+    }
+    let serial = 0;
+
+    const sendChunk = (value : Uint8Array) => {
+         PeerConnection.sendConnection(peerID,{
+            id:id,
+            dataType: DataType.CHUNK,
+            chunk:value,
+            chunkSerial:serial
+        })
+        serial++;
     }
 
     const handleUpload = () => {
