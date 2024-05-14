@@ -38,7 +38,6 @@ const page = () => {
     const setStartSession = useConnection(s => s.setStartSession)
     const setSelectedFiles = useSelected(s => s.setList)
     const dragRef = useRef<HTMLDivElement>(null)
-    let streamSaver : any = null;
 
     useEffect(() => {
 
@@ -50,7 +49,6 @@ const page = () => {
         if (!startSession && !searchParams.has('peerID')) router.push('/')
 
         window.addEventListener('beforeunload', handleBeforeUnload);
-        streamSaver = require(/* webpackIgnore: true */'streamsaver');
         return () => {
             window.removeEventListener('beforeunload', handleBeforeUnload);
         };
@@ -102,11 +100,13 @@ const page = () => {
         }
     }
 
-    const handleConnection = () => {
+    const handleConnection = async () => {
         let serial = 0;
         let fileSize = 0;
         let currentSize = 0;
         let fileID = 0;
+
+        const streamSaver = (await import('streamsaver')).default
 
         PeerConnection.onConnectionDisconnected(peerID, () => {
             PeerConnection.closePeerSession()
