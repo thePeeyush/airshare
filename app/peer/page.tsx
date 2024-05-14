@@ -50,7 +50,7 @@ const page = () => {
         if (!startSession && !searchParams.has('peerID')) router.push('/')
 
         window.addEventListener('beforeunload', handleBeforeUnload);
-        streamSaver = require('streamsaver');
+        streamSaver = require(/* webpackIgnore: true */'streamsaver');
         return () => {
             window.removeEventListener('beforeunload', handleBeforeUnload);
         };
