@@ -12,6 +12,7 @@ const FileInput = () => {
     const setfiles = useShared(s => s.setList)
     const setCount = useShared(s => s.setCount)
     const setStatus = useShared(s => s.setStatus)
+    const setProgress = useShared(s => s.setProgress)
     const selectedFiles = useSelected(s => s.SelectedFiles)
     const setSelectedFiles = useSelected(s => s.setList)
     const clearSelectedFiles = useSelected(s => s.reset)
@@ -28,6 +29,10 @@ const FileInput = () => {
             }
         }
     };
+    
+    let serial = 0;
+    let fileSize = 0;
+    let currentSize = 0;
 
     const uploadFile = async (file: File) => {
         
@@ -38,7 +43,8 @@ const FileInput = () => {
                 filename: file.name,
                 filesize: file.size,
             })
-            setfiles({ id: id, name: file.name, type: file.type , size: file.size, status: false })
+            fileSize = file.size;
+            setfiles({ id: id, name: file.name, type: file.type , size: file.size, status: false, progress: 0 })
             setCount()
             await readChunk(file,sendChunk);
             await PeerConnection.sendConnection(peerID, {
@@ -46,6 +52,7 @@ const FileInput = () => {
                 dataType: DataType.POST,
                 filesize: file.size,
             })
+            serial = 0;
             setStatus(id, true)
             console.log('data send successfully')
 
@@ -53,8 +60,6 @@ const FileInput = () => {
             console.log(error);
         }
     }
-    let serial = 0;
-
     const sendChunk = (value : Uint8Array) => {
          PeerConnection.sendConnection(peerID,{
             id:id,
@@ -63,6 +68,8 @@ const FileInput = () => {
             chunkSerial:serial
         })
         serial++;
+        currentSize += value.byteLength
+        setProgress(id, Math.floor((currentSize / fileSize) * 100))
     }
 
     const handleUpload = () => {

@@ -20,6 +20,7 @@ type SharedFile = {
   id: number;
   name: string;
   size: number;
+  progress: number;
   status: boolean;
   type: string;
 };
@@ -32,6 +33,7 @@ interface Shared {
   setCount: () => void;
   setList: (file: SharedFile) => void;
   setStatus: (id: number, newStatus: boolean) => void;
+  setProgress: (id: number, newProgress: number) => void;
   reset: () => void;
 }
 

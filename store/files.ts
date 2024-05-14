@@ -13,6 +13,14 @@ const useShared = create<Shared>()((set) => ({
         ),
       };
     }),
+    setProgress: (id, newProgress) =>
+      set((s) => {
+        return {
+          SharedFiles: s.SharedFiles.map((file) =>
+            file.id === id ? { ...file, progress: newProgress } : file
+          ),
+        };
+      }),
   reset:()=>(set({count:0,SharedFiles:[]}))
 }));
 

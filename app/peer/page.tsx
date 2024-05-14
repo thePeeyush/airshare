@@ -14,7 +14,6 @@ import SharedList from '@/components/sharedFiles'
 import { useSelected, useShared } from '@/store/files'
 import NotShared from '@/components/notShared'
 import Image from 'next/image';
-import streamSaver from "streamsaver";
 
 const page = () => {
 
@@ -34,12 +33,15 @@ const page = () => {
     const setCount = useShared(s => s.setCount)
     const setfiles = useShared(s => s.setList)
     const setStatus = useShared(s => s.setStatus)
+    const setProgress = useShared(s => s.setProgress)
     const startSession = useConnection(s => s.startSession)
     const setStartSession = useConnection(s => s.setStartSession)
     const setSelectedFiles = useSelected(s => s.setList)
     const dragRef = useRef<HTMLDivElement>(null)
+    let streamSaver : any = null;
 
     useEffect(() => {
+
         if (searchParams.has('peerID')) {
             const peerID = searchParams.get('peerID')
             setStartSession(true)
@@ -48,6 +50,7 @@ const page = () => {
         if (!startSession && !searchParams.has('peerID')) router.push('/')
 
         window.addEventListener('beforeunload', handleBeforeUnload);
+        streamSaver = require('streamsaver');
         return () => {
             window.removeEventListener('beforeunload', handleBeforeUnload);
         };
@@ -115,7 +118,7 @@ const page = () => {
 
         PeerConnection.onConnectionReceiveData<Pre>(peerID, (info) => {
             if (info.dataType === DataType.PRE) {
-                setfiles({ id: info.id, name: info.filename, size: info.filesize, type: info.filetype, status: false })
+                setfiles({ id: info.id, name: info.filename, size: info.filesize, type: info.filetype, status: false, progress: 0 })
                 setCount()
                 const fileStream = streamSaver.createWriteStream(info.filename, {
                     size: info.filesize
@@ -136,8 +139,9 @@ const page = () => {
                         console.log("chunk no:", chunk.chunkSerial, chunk.chunk);
                         writer.write(chunk.chunk)
                         currentSize += chunk.chunk.byteLength
+                        setProgress(fileID, Math.floor((currentSize / fileSize) * 100))
                     }
-                    else console.log('chunk error', serial);
+                    else console.log('chunk error', serial, "incoming", chunk.chunkSerial);
                     serial++;
                 }
             })

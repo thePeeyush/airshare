@@ -40,14 +40,17 @@ const SharedList = ({ className, ...props }: CardProps) => {
                 key={file.id}
                 className="mb-4 grid grid-cols-[25px_1fr] pb-4 last:mb-0 last:pb-0"
               >
+                
                 <span className={`flex h-4 w-4 translate-y-1 rounded-full  ${file.status ? 'bg-green-500' : 'bg-yellow-500 animate-pulse'}`} />
                 <div className="space-y-1 flex flex-row justify-between items-center">
                   <p className="text-sm text-white font-medium leading-none">
                     {file.name}
                   </p>
+                  
                   <p className="text-sm text-gray-400">
                     {filesize}
                   </p>
+                  <p className="text-sm text-yellow-400">{file.progress} %</p>
                 </div>
               </div>
             )
