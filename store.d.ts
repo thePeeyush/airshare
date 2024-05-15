@@ -23,10 +23,12 @@ type SharedFile = {
   progress: number;
   status: boolean;
   type: string;
+  sendByMe?: boolean;
 };
 
 interface files extends Array<SharedFile> {}
 
+type SharedFiles = files
 interface Shared {
   count: number;
   SharedFiles: files;

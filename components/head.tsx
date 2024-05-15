@@ -17,7 +17,7 @@ const Head = () => {
         Router.push('/')
     }
     return (
-        <div className='flex justify-between p-2 rounded-lg w-full items-center'>
+        <div className='flex justify-between p-6 py-0 pt-2 rounded-lg w-full items-center'>
             <Logo className='w-40 p-2 lg:max-w-xs'/>
             <Popover>
                 <PopoverTrigger >

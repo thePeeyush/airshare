@@ -29,12 +29,25 @@ const FileInput = () => {
             }
         }
     };
-    
-    let serial = 0;
-    let fileSize = 0;
-    let currentSize = 0;
+
 
     const uploadFile = async (file: File) => {
+
+        let serial = 0;
+        let fileSize = 0;
+        let currentSize = 0;
+
+        const sendChunk = (value : Uint8Array) => {
+            PeerConnection.sendConnection(peerID,{
+               id:id,
+               dataType: DataType.CHUNK,
+               chunk:value,
+               chunkSerial:serial
+           })
+           serial++;
+           currentSize += value.byteLength
+           setProgress(id, Math.floor((currentSize / fileSize) * 100))
+       }
         
         try {
             await PeerConnection.sendConnection(peerID, {
@@ -44,7 +57,7 @@ const FileInput = () => {
                 filesize: file.size,
             })
             fileSize = file.size;
-            setfiles({ id: id, name: file.name, type: file.type , size: file.size, status: false, progress: 0 })
+            setfiles({ id: id, name: file.name, type: file.type , size: file.size, status: false, progress: 0, sendByMe: true })
             setCount()
             await readChunk(file,sendChunk);
             await PeerConnection.sendConnection(peerID, {
@@ -59,17 +72,6 @@ const FileInput = () => {
         } catch (error) {
             console.log(error);
         }
-    }
-    const sendChunk = (value : Uint8Array) => {
-         PeerConnection.sendConnection(peerID,{
-            id:id,
-            dataType: DataType.CHUNK,
-            chunk:value,
-            chunkSerial:serial
-        })
-        serial++;
-        currentSize += value.byteLength
-        setProgress(id, Math.floor((currentSize / fileSize) * 100))
     }
 
     const handleUpload = () => {

@@ -151,16 +151,19 @@ const page = () => {
                     writer.close()
                     console.log(info);
                     serial = 0;
+                    fileSize = 0;
+                    currentSize = 0;
+                    fileID = 0;
                     setStatus(info.id, true)
                 }
             })
-            
+
         }
     }
 
     if (isConnected) {
         return (
-            <main onDrop={e => handleDrop(e)} onDragEnter={e => handleDragEnter(e)} onDragLeave={e => handleDragLeave(e)} onDragOver={e => e.preventDefault()} className='w-screen md:min-w-[700px] md:w-auto'>
+            <main onDrop={e => handleDrop(e)} onDragEnter={e => handleDragEnter(e)} onDragLeave={e => handleDragLeave(e)} onDragOver={e => e.preventDefault()} className='w-screen md:min-w-[700px] md:w-auto h-screen'>
                 <div ref={dragRef} className='flex flex-col justify-between items-center w-full'>
                     <Head />
                     {fileCount !== 0 ? <SharedList className='bg-transparent border-none' /> : <NotShared />}
