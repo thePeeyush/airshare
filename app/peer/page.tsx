@@ -3,7 +3,6 @@
 import { DataType, PeerConnection, Pre, Chunk, Post } from '@/lib/peer'
 import { useRouter, useSearchParams } from 'next/navigation'
 import React, { useEffect, useRef } from 'react'
-import download from "js-file-download";
 import FileInput from '@/components/FileInput'
 import { usePeer } from '@/store/peer'
 import { useConnection } from '@/store/connection'
@@ -40,22 +39,25 @@ const page = () => {
     const dragRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
-
+        if (!startSession && !searchParams.has('peerID')) router.push('/')
         if (searchParams.has('peerID')) {
             const peerID = searchParams.get('peerID')
             setStartSession(true)
             connectToPeer(peerID!)
         }
-        if (!startSession && !searchParams.has('peerID')) router.push('/')
-
         window.addEventListener('beforeunload', handleBeforeUnload);
         return () => {
             window.removeEventListener('beforeunload', handleBeforeUnload);
+        
         };
     }, [])
 
     useEffect(() => {
-        if (isConnected) handleConnection()
+        if (isConnected) {
+            return ()=>{
+                handleConnection()
+            }
+        }
     }, [isConnected])
 
     const handleBeforeUnload = () => {
@@ -100,64 +102,81 @@ const page = () => {
         }
     }
 
+    const cleanUp = () => {
+        PeerConnection.closePeerSession()
+        router.push('/')
+        resetConnection()
+        resetPeer()
+        resetShared()
+    }
+
     const handleConnection = async () => {
         let serial = 0;
         let fileSize = 0;
         let currentSize = 0;
         let fileID = 0;
 
-        const streamSaver = (await import('streamsaver')).default
+        let writer: WritableStreamDefaultWriter<any>;
+        const saveStream = (fileStream: WritableStream<any>) => {
+            writer = fileStream.getWriter()
+        }
 
-        PeerConnection.onConnectionDisconnected(peerID, () => {
-            PeerConnection.closePeerSession()
-            router.push('/')
-            resetConnection()
-            resetPeer()
-            resetShared()
-        })
-
-        PeerConnection.onConnectionReceiveData<Pre>(peerID, (info) => {
+        const handleConnectionRecievePre = async (info: Pre) => {
             if (info.dataType === DataType.PRE) {
                 setfiles({ id: info.id, name: info.filename, size: info.filesize, type: info.filetype, status: false, progress: 0 })
                 setCount()
-                const fileStream = streamSaver.createWriteStream(info.filename, {
-                    size: info.filesize
-                })
+                const streamSaver = (await import('streamsaver')).default
+                const fileStream = streamSaver.createWriteStream(info.filename, { size: info.filesize })
+                saveStream(fileStream)
                 console.log(info);
                 fileSize = info.filesize
                 fileID = info.id
-                saveStream(fileStream)
             }
-        })
+        }
 
-        const saveStream = (fileStream: WritableStream<any>) => {
-            const writer = fileStream.getWriter()
-
-            PeerConnection.onConnectionReceiveData<Chunk>(peerID, (chunk) => {
-                if (chunk.dataType === DataType.CHUNK) {
-                    if (chunk.chunkSerial === serial) {
-                        console.log("chunk no:", chunk.chunkSerial, chunk.chunk);
+        const handleConnectionRecieveChunk = async (chunk: Chunk) => {
+            if (chunk.dataType === DataType.CHUNK) {
+                if (chunk.chunkSerial === serial) {
+                    console.log("chunk no:", chunk.chunkSerial);
+                    try {
+                        await writer.ready
                         writer.write(chunk.chunk)
                         currentSize += chunk.chunk.byteLength
                         setProgress(fileID, Math.floor((currentSize / fileSize) * 100))
+                    } catch (error) {
+                        throw error
                     }
-                    else console.log('chunk error', serial, "incoming", chunk.chunkSerial);
-                    serial++;
                 }
-            })
+                else {
+                    console.log('chunk error', serial, "incoming", chunk.chunkSerial);
+                    writer.abort()
+                }
+                serial++;
+            }
+        }
 
-            PeerConnection.onConnectionReceiveData<Post>(peerID, (info) => {
-                if (info.dataType === DataType.POST) {
+        const handleConnectionRecievePost = async (info: Post) => {
+            if (info.dataType === DataType.POST) {
+                serial = 0;
+                fileSize = 0;
+                currentSize = 0;
+                fileID = 0;
+                setStatus(info.id, true)
+                console.log(info);
+                try {
+                    await writer.ready
                     writer.close()
-                    console.log(info);
-                    serial = 0;
-                    fileSize = 0;
-                    currentSize = 0;
-                    fileID = 0;
-                    setStatus(info.id, true)
+                } catch (error) {
+                    throw error
                 }
-            })
+            }
+        }
 
+        PeerConnection.onConnectionDisconnected(peerID, cleanUp)
+        if (isConnected) {
+        PeerConnection.onConnectionReceiveData<Pre>(peerID, handleConnectionRecievePre)
+        PeerConnection.onConnectionReceiveData<Chunk>(peerID, handleConnectionRecieveChunk)
+        PeerConnection.onConnectionReceiveData<Post>(peerID, handleConnectionRecievePost)
         }
     }
 

@@ -19,35 +19,30 @@ const LinkShare = () => {
     const myID = usePeer(s => s.myID)
     useEffect(() => {
         if (myID !== '') setGenerated(true)
-        try {
-            PeerConnection.onIncomingConnection((conn) => {
-                const id = conn.peer
-                setPeerID(id)
-                setIsConnected(true)
-                router.push('/peer')
-            })
-        } catch (error) {
-            console.log(error);
-
-        }
+        PeerConnection.onIncomingConnection((conn) => {
+            const id = conn.peer
+            setPeerID(id)
+            setIsConnected(true)
+            router.push('/peer')
+        })
     }, [myID])
 
-    useEffect(()=>{
+    useEffect(() => {
         if (!copied) {
-           copyLink() 
+            copyLink()
         }
-    },[generated,clicked])
+    }, [generated, clicked])
 
     const copyLink = async () => {
         if (generated && clicked) {
             const link = `${getBaseURL()}peer?peerID=${myID}`
-                await navigator.clipboard.writeText(link)
-                setCopied(true)
+            await navigator.clipboard.writeText(link)
+            setCopied(true)
         }
     }
 
     return (
-        <Button onClick={()=>setClicked(true)} variant='outline' className='rounded-full w-48 bg-transparent backdrop-blur-sm text-white'>{
+        <Button onClick={() => setClicked(true)} variant='outline' className='rounded-full w-48 bg-transparent backdrop-blur-sm text-white'>{
             copied ? <>Copied</>
                 : (clicked && !generated ? <>Generating...</>
                     : <>Share Link</>)

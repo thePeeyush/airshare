@@ -7,14 +7,6 @@ export enum DataType {
     POST = 'POST',
     MESSAGE = 'MESSAGE',
 }
-// export interface Data {
-//     id:number
-//     dataType: DataType
-//     file?: Blob
-//     fileName?: string
-//     fileType?: string
-//     message?: string
-// }
 
 export interface Chunk {
     id:number

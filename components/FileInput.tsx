@@ -16,7 +16,6 @@ const FileInput = () => {
     const selectedFiles = useSelected(s => s.SelectedFiles)
     const setSelectedFiles = useSelected(s => s.setList)
     const clearSelectedFiles = useSelected(s => s.reset)
-    const id = Math.floor(Math.random() * 10e6)
 
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -36,19 +35,20 @@ const FileInput = () => {
         let serial = 0;
         let fileSize = 0;
         let currentSize = 0;
+        const id = Math.floor(Math.random() * 10e6)
 
-        const sendChunk = (value : Uint8Array) => {
-            PeerConnection.sendConnection(peerID,{
-               id:id,
-               dataType: DataType.CHUNK,
-               chunk:value,
-               chunkSerial:serial
-           })
-           serial++;
-           currentSize += value.byteLength
-           setProgress(id, Math.floor((currentSize / fileSize) * 100))
-       }
-        
+        const sendChunk = (value: Uint8Array) => {
+            PeerConnection.sendConnection(peerID, {
+                id: id,
+                dataType: DataType.CHUNK,
+                chunk: value,
+                chunkSerial: serial
+            })
+            serial++;
+            currentSize += value.byteLength
+            setProgress(id, Math.floor((currentSize / fileSize) * 100))
+        }
+
         try {
             await PeerConnection.sendConnection(peerID, {
                 id: id,
@@ -57,15 +57,14 @@ const FileInput = () => {
                 filesize: file.size,
             })
             fileSize = file.size;
-            setfiles({ id: id, name: file.name, type: file.type , size: file.size, status: false, progress: 0, sendByMe: true })
+            setfiles({ id: id, name: file.name, type: file.type, size: file.size, status: false, progress: 0, sendByMe: true })
             setCount()
-            await readChunk(file,sendChunk);
+            await readChunk(file, sendChunk);
             await PeerConnection.sendConnection(peerID, {
                 id: id,
                 dataType: DataType.POST,
                 filesize: file.size,
             })
-            serial = 0;
             setStatus(id, true)
             console.log('data send successfully')
 
@@ -74,11 +73,14 @@ const FileInput = () => {
         }
     }
 
-    const handleUpload = () => {
-        while (selectedFiles.length > 0) {
-            const file = selectedFiles.shift()
-            if (typeof file !== "undefined") {
-                uploadFile(file)
+    const handleUpload = async () => {
+        for (let file of selectedFiles) {
+            if (file) {
+                try {
+                    await uploadFile(file);
+                } catch (error) {
+                    console.log(error);
+                }
             }
         }
         clearSelectedFiles()
@@ -89,7 +91,7 @@ const FileInput = () => {
             <div className={`flex flex-col p-4 space-y-3 max-h-[70vh] overflow-y-scroll bg-black bg-opacity-40 backdrop-blur-md rounded-xl ${selectedFiles.length < 1 && 'hidden'}`}>
                 {
                     selectedFiles.map((file) => {
-                        const filesize = (file.size > 10e5 ? `${Math.ceil(file.size / 10e5)} MB` : `${Math.ceil(file.size / 10e2)} KB`) 
+                        const filesize = (file.size > 10e5 ? `${Math.ceil(file.size / 10e5)} MB` : `${Math.ceil(file.size / 10e2)} KB`)
                         return (
                             <div className="flex justify-between space-x-2">
                                 <p className="text-sm text-white font-medium leading-none text-ellipsis overflow-hidden whitespace-nowrap">
