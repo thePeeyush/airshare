@@ -13,6 +13,7 @@ import { useEffect } from "react";
 import { IoIosQrScanner } from "react-icons/io";
 import { HiOutlineQrCode } from "react-icons/hi2";
 import { WavyBackground } from "@/components/ui/wavy-background";
+import { toast } from "@/components/ui/use-toast";
 
 export default function Home() {
 
@@ -35,7 +36,7 @@ export default function Home() {
       const id = await PeerConnection.startPeerSession()
       setMyID(id)
     } catch (error) {
-      console.log(error);
+      toast({ title: 'Error', description: 'Reload the page', variant: 'destructive' })
       Router.push('/')
     }
   }

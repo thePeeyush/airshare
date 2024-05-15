@@ -4,7 +4,10 @@ const nextConfig = {
         missingSuspenseWithCSRBailout: false,
       },
     images: {
-        domains: ["img.freepik.com"],
+        remotePatterns: [{
+          protocol: 'https',
+          hostname: 'img.freepik.com',
+        }]
     }
 };
 

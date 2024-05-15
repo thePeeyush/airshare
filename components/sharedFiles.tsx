@@ -8,6 +8,7 @@ import {
 import { useShared } from "@/store/files"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Progress } from "./ui/progress"
+import { formatBytes } from "@/lib/service"
 
 type CardProps = React.ComponentProps<typeof Card>
 
@@ -43,8 +44,8 @@ const List = ({ files, send, recieve }: { files: SharedFile[], send?: boolean, r
     <CardContent className="grid gap-4 w-full overflow-y-scroll h-[69vh] mb-[2vh]">
       <div>
         {files.map((file) => {
-          const filesize = (file.size > 10e5 ? `${Math.ceil(file.size / 10e5)}MB` : `${Math.ceil(file.size / 10e2)}KB`)
-          const currentSize = (((file.progress * file.size) / 100) > 10e5 ? `${Math.ceil(((file.progress * file.size) / 100) / 10e5)}MB` : `${Math.ceil(((file.progress * file.size) / 100) / 10e2)}KB`)
+          const filesize = formatBytes(file.size)
+          const currentSize = formatBytes((file.progress * file.size) / 100)
 
           if (recieve && file.sendByMe) {
             return;

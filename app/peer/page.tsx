@@ -13,6 +13,7 @@ import SharedList from '@/components/sharedFiles'
 import { useSelected, useShared } from '@/store/files'
 import NotShared from '@/components/notShared'
 import Image from 'next/image';
+import { toast } from '@/components/ui/use-toast'
 
 const page = () => {
 
@@ -49,7 +50,6 @@ const page = () => {
         window.addEventListener('beforeunload', handleBeforeUnload);
         return () => {
             window.removeEventListener('beforeunload', handleBeforeUnload);
-        
         };
     }, [])
 
@@ -96,7 +96,7 @@ const page = () => {
             await PeerConnection.connectPeer(peerID)
             setIsConnected(true)
         } catch (error) {
-            console.log(error);
+            toast({ title: 'Error', description: 'Reload the page', variant: 'destructive' })
             router.push('/')
         }
     }
@@ -111,7 +111,7 @@ const page = () => {
 
     const handleConnection = async () => {
 
-        if(flag.current) return
+        if (flag.current) return
         flag.current = true
 
         let serial = 0;
@@ -139,14 +139,14 @@ const page = () => {
         const handleConnectionRecieveChunk = async (chunk: Chunk) => {
             if (chunk.dataType === DataType.CHUNK) {
                 if (chunk.chunkSerial === serial) {
-                    console.log("chunk no:", chunk.chunkSerial);
                     try {
                         await writer.ready
                         writer.write(chunk.chunk)
                         currentSize += chunk.chunk.byteLength
                         setProgress(fileID, Math.floor((currentSize / fileSize) * 100))
                     } catch (error) {
-                        throw error
+                        writer.abort()
+                        toast({ title: 'Error', description: 'something went wrong', variant: 'destructive' })
                     }
                 }
                 else {
@@ -167,7 +167,8 @@ const page = () => {
                     await writer.ready
                     writer.close()
                 } catch (error) {
-                    throw error
+                    toast({ title: 'Error', description: 'something went wrong', variant: 'destructive' })
+                    writer.abort()
                 }
             }
         }

@@ -5,7 +5,7 @@ import { DataType, PeerConnection, Pre } from '@/lib/peer'
 import { usePeer } from '@/store/peer'
 import { RiSendPlaneLine } from "react-icons/ri";
 import { useShared, useSelected } from '@/store/files'
-import { readChunk } from '@/lib/service'
+import { formatBytes, readChunk } from '@/lib/service'
 
 const FileInput = () => {
     const peerID = usePeer(s => s.peerID)
@@ -91,14 +91,13 @@ const FileInput = () => {
             <div className={`flex flex-col p-4 space-y-3 max-h-[70vh] overflow-y-scroll bg-black bg-opacity-40 backdrop-blur-md rounded-xl ${selectedFiles.length < 1 && 'hidden'}`}>
                 {
                     selectedFiles.map((file) => {
-                        const filesize = (file.size > 10e5 ? `${Math.ceil(file.size / 10e5)} MB` : `${Math.ceil(file.size / 10e2)} KB`)
                         return (
                             <div className="flex justify-between space-x-2">
                                 <p className="text-sm text-white font-medium leading-none text-ellipsis overflow-hidden whitespace-nowrap">
                                     {file.name}
                                 </p>
                                 <p className="text-sm text-gray-400 min-w-fit">
-                                    {filesize}
+                                    {formatBytes(file.size)}
                                 </p>
                             </div>
                         )
