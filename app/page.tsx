@@ -31,8 +31,13 @@ export default function Home() {
   }, [])
 
   const startSession = async () => {
-    const id = await PeerConnection.startPeerSession()
-    setMyID(id)
+    try {
+      const id = await PeerConnection.startPeerSession()
+      setMyID(id)
+    } catch (error) {
+      console.log(error);
+      Router.push('/')
+    }
   }
 
   const Disconnect = async () => {
@@ -42,7 +47,7 @@ export default function Home() {
 
   return (
     <main className=" flex flex-col justify-around  items-center px-8 pb-8 min-h-[90vh] lg:min-h-screen backdrop-blur-2xl">
-      <Logo/>
+      <Logo />
       <p className="text-xs text-gray-400">🔒 end to end encrypted</p>
       <div className="flex flex-col items-center">
         <Image

@@ -105,9 +105,9 @@ const FileInput = () => {
                     })
                 }
             </div>
-            <div className="flex w-full items-center justify-centerd gap-1.5 bg-white rounded-full border-4 border-white">
-                <Input id="file" multiple={true} type="file" className='rounded-full border-none' onChange={e => handleFileChange(e)} />
-                <Button disabled={selectedFiles.length < 1} onClick={handleUpload} className='rounded-full' ><RiSendPlaneLine /></Button>
+            <div className="flex w-full items-center justify-centerd gap-1.5 bg-white rounded-full border-2 border-gray-800 border-dashed p-1 ">
+                <Input id="file" multiple={true} type="file" className='rounded-full bg-transparent border-none text-white' onChange={e => handleFileChange(e)} />
+                <Button disabled={selectedFiles.length < 1} onClick={handleUpload} className='rounded-full bg-gradient-to-tr from-blue-600 to-pink-400 ' ><RiSendPlaneLine /></Button>
             </div>
         </div>
 

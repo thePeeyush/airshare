@@ -37,6 +37,7 @@ const page = () => {
     const setStartSession = useConnection(s => s.setStartSession)
     const setSelectedFiles = useSelected(s => s.setList)
     const dragRef = useRef<HTMLDivElement>(null)
+    const flag = useRef(false)
 
     useEffect(() => {
         if (!startSession && !searchParams.has('peerID')) router.push('/')
@@ -54,9 +55,7 @@ const page = () => {
 
     useEffect(() => {
         if (isConnected) {
-            return ()=>{
-                handleConnection()
-            }
+            handleConnection()
         }
     }, [isConnected])
 
@@ -111,6 +110,10 @@ const page = () => {
     }
 
     const handleConnection = async () => {
+
+        if(flag.current) return
+        flag.current = true
+
         let serial = 0;
         let fileSize = 0;
         let currentSize = 0;
@@ -128,7 +131,6 @@ const page = () => {
                 const streamSaver = (await import('streamsaver')).default
                 const fileStream = streamSaver.createWriteStream(info.filename, { size: info.filesize })
                 saveStream(fileStream)
-                console.log(info);
                 fileSize = info.filesize
                 fileID = info.id
             }
@@ -148,7 +150,6 @@ const page = () => {
                     }
                 }
                 else {
-                    console.log('chunk error', serial, "incoming", chunk.chunkSerial);
                     writer.abort()
                 }
                 serial++;
@@ -162,7 +163,6 @@ const page = () => {
                 currentSize = 0;
                 fileID = 0;
                 setStatus(info.id, true)
-                console.log(info);
                 try {
                     await writer.ready
                     writer.close()
@@ -173,11 +173,9 @@ const page = () => {
         }
 
         PeerConnection.onConnectionDisconnected(peerID, cleanUp)
-        if (isConnected) {
         PeerConnection.onConnectionReceiveData<Pre>(peerID, handleConnectionRecievePre)
         PeerConnection.onConnectionReceiveData<Chunk>(peerID, handleConnectionRecieveChunk)
         PeerConnection.onConnectionReceiveData<Post>(peerID, handleConnectionRecievePost)
-        }
     }
 
     if (isConnected) {

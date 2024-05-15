@@ -46,7 +46,7 @@ export const PeerConnection = {
                 resolve(id)
                 console.log('My ID: ' + id)
             }).on('error', (err) => {
-                console.log(err)
+                reject(err)
             })
         } catch (err) {
             console.log(err)

@@ -21,16 +21,15 @@ const SharedList = ({ className, ...props }: CardProps) => {
     <Card className={cn("w-full text-center", className)} {...props}>
       <Tabs defaultValue="All" className="w-full">
         <CardHeader>
-          <TabsList className="grid w-full grid-cols-3 bg-slate-900 bg-opacity-60">
-            <TabsTrigger value="All">All</TabsTrigger>
-            <TabsTrigger value="Send">Send</TabsTrigger>
-            <TabsTrigger value="Recieved">Recieved</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-3 bg-gray-700 bg-opacity-20 ">
+            <TabsTrigger className="text-gray-500" value="All">All</TabsTrigger>
+            <TabsTrigger className="text-gray-500" value="Send">Send</TabsTrigger>
+            <TabsTrigger className="text-gray-500" value="Recieved">Recieved</TabsTrigger>
           </TabsList>
         </CardHeader>
-
-        <TabsContent value="All" className="text-white"><CardDescription className="text-center"><List files={sharedFiles} /></CardDescription></TabsContent>
-        <TabsContent value="Send" className="text-white"><CardDescription className="text-center"><List files={sharedFiles} send={true} /></CardDescription></TabsContent>
-        <TabsContent value="Recieved" className="text-white"><CardDescription className="text-center"><List files={sharedFiles} recieve={true} /></CardDescription></TabsContent>
+        <TabsContent value="All" ><CardDescription className="text-center"><List files={sharedFiles} /></CardDescription></TabsContent>
+        <TabsContent value="Send"><CardDescription className="text-center"><List files={sharedFiles} send={true} /></CardDescription></TabsContent>
+        <TabsContent value="Recieved"><CardDescription className="text-center"><List files={sharedFiles} recieve={true} /></CardDescription></TabsContent>
 
       </Tabs>
     </Card>
@@ -66,7 +65,7 @@ const List = ({ files, send, recieve }: { files: SharedFile[], send?: boolean, r
                   {file.status ? `✔️` :`${currentSize} / ${filesize}`}
                 </p>
               </div>
-            <Progress value={file.progress} className={`rounded-none h-full bg-transparent opacity-50 ${file.status ? 'hidden' : ''} absolute top-0 -z-10`} />
+            <Progress value={file.progress} className={`rounded-none h-full bg-transparent opacity-20 ${file.status ? 'hidden' : ''} absolute top-0 -z-10`} />
             </div>
           )
         })}
